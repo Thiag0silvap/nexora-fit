@@ -1,0 +1,220 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN_ACADEMIA
+  INSTRUTOR
+  ALUNO
+  RECEPCAO
+}
+
+enum ObjetivoTreino {
+  HIPERTROFIA
+  EMAGRECIMENTO
+  CONDICIONAMENTO
+}
+
+enum StatusFicha {
+  ATIVA
+  INATIVA
+  ARQUIVADA
+}
+
+enum Sexo {
+  MASCULINO
+  FEMININO
+  OUTRO
+}
+
+enum GrupoMuscular {
+  PEITO
+  COSTAS
+  OMBRO
+  BICEPS
+  TRICEPS
+  PERNAS
+  GLUTEOS
+  ABDOMEN
+  CARDIO
+}
+
+model Academia {
+  id        String    @id @default(uuid()) @db.Uuid
+  nome      String
+  cnpj      String?   @unique
+  email     String    @unique
+  telefone  String?
+  ativa     Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  usuarios  Usuario[]
+}
+
+model Usuario {
+  id         String     @id @default(uuid()) @db.Uuid
+  academiaId String     @db.Uuid
+  nome       String
+  email      String     @unique
+  senhaHash  String
+  role       UserRole
+  ativo      Boolean    @default(true)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  academia   Academia   @relation(fields: [academiaId], references: [id], onDelete: Restrict)
+  aluno      Aluno?
+  instrutor  Instrutor?
+
+  @@index([academiaId])
+  @@index([role])
+}
+
+model Aluno {
+  id              String            @id @default(uuid()) @db.Uuid
+  usuarioId       String            @unique @db.Uuid
+  matricula       String            @unique
+  dataNascimento  DateTime?
+  sexo            Sexo?
+  altura          Decimal?          @db.Decimal(5, 2)
+  pesoAtual       Decimal?          @db.Decimal(5, 2)
+  objetivo        ObjetivoTreino?
+  ativo           Boolean           @default(true)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  usuario         Usuario           @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  fichasTreino    FichaTreino[]
+  avaliacoes      AvaliacaoFisica[]
+  execucoesTreino ExecucaoTreino[]
+}
+
+model Instrutor {
+  id            String        @id @default(uuid()) @db.Uuid
+  usuarioId     String        @unique @db.Uuid
+  cref          String?
+  especialidade String?
+  ativo         Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  usuario       Usuario       @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  fichasTreino  FichaTreino[]
+}
+
+model Exercicio {
+  id                String             @id @default(uuid()) @db.Uuid
+  nome              String             @unique
+  grupoMuscular     GrupoMuscular
+  descricao         String?
+  videoUrl          String?
+  ativo             Boolean            @default(true)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  exerciciosDivisao ExercicioDivisao[]
+
+  @@index([grupoMuscular])
+}
+
+model FichaTreino {
+  id          String          @id @default(uuid()) @db.Uuid
+  alunoId     String          @db.Uuid
+  instrutorId String          @db.Uuid
+  nome        String
+  observacao  String?
+  status      StatusFicha     @default(ATIVA)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  aluno       Aluno           @relation(fields: [alunoId], references: [id], onDelete: Cascade)
+  instrutor   Instrutor       @relation(fields: [instrutorId], references: [id], onDelete: Restrict)
+  divisoes    DivisaoTreino[]
+
+  @@index([alunoId])
+  @@index([instrutorId])
+  @@index([status])
+}
+
+model DivisaoTreino {
+  id                String             @id @default(uuid()) @db.Uuid
+  fichaTreinoId     String             @db.Uuid
+  nome              String
+  ordem             Int
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  fichaTreino       FichaTreino        @relation(fields: [fichaTreinoId], references: [id], onDelete: Cascade)
+  exerciciosDivisao ExercicioDivisao[]
+
+  @@unique([fichaTreinoId, ordem])
+  @@index([fichaTreinoId])
+}
+
+model ExercicioDivisao {
+  id               String           @id @default(uuid()) @db.Uuid
+  divisaoTreinoId  String           @db.Uuid
+  exercicioId      String           @db.Uuid
+  series           Int
+  repeticoes       String
+  descansoSegundos Int?
+  observacao       String?
+  ordem            Int
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  divisaoTreino    DivisaoTreino    @relation(fields: [divisaoTreinoId], references: [id], onDelete: Cascade)
+  exercicio        Exercicio        @relation(fields: [exercicioId], references: [id], onDelete: Restrict)
+  execucoesTreino  ExecucaoTreino[]
+
+  @@unique([divisaoTreinoId, ordem])
+  @@index([divisaoTreinoId])
+  @@index([exercicioId])
+}
+
+model ExecucaoTreino {
+  id                   String           @id @default(uuid()) @db.Uuid
+  alunoId              String           @db.Uuid
+  exercicioDivisaoId   String           @db.Uuid
+  carga                Decimal          @db.Decimal(7, 2)
+  repeticoesRealizadas Int
+  observacao           String?
+  executadoEm          DateTime         @default(now())
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  aluno                Aluno            @relation(fields: [alunoId], references: [id], onDelete: Cascade)
+  exercicioDivisao     ExercicioDivisao @relation(fields: [exercicioDivisaoId], references: [id], onDelete: Restrict)
+
+  @@index([alunoId])
+  @@index([exercicioDivisaoId])
+  @@index([executadoEm])
+}
+
+model AvaliacaoFisica {
+  id               String            @id @default(uuid()) @db.Uuid
+  alunoId          String            @db.Uuid
+  peso             Decimal?          @db.Decimal(5, 2)
+  observacao       String?
+  createdAt        DateTime          @default(now())
+  aluno            Aluno             @relation(fields: [alunoId], references: [id], onDelete: Cascade)
+  medidasCorporais MedidasCorporais?
+
+  @@index([alunoId])
+}
+
+model MedidasCorporais {
+  id                  String          @id @default(uuid()) @db.Uuid
+  avaliacaoFisicaId   String          @unique @db.Uuid
+  pescoco             Decimal?        @db.Decimal(5, 2)
+  ombro               Decimal?        @db.Decimal(5, 2)
+  peitoral            Decimal?        @db.Decimal(5, 2)
+  cintura             Decimal?        @db.Decimal(5, 2)
+  abdomen             Decimal?        @db.Decimal(5, 2)
+  quadril             Decimal?        @db.Decimal(5, 2)
+  bracoDireito        Decimal?        @db.Decimal(5, 2)
+  bracoEsquerdo       Decimal?        @db.Decimal(5, 2)
+  antebracoDireito    Decimal?        @db.Decimal(5, 2)
+  antebracoEsquerdo   Decimal?        @db.Decimal(5, 2)
+  coxaDireita         Decimal?        @db.Decimal(5, 2)
+  coxaEsquerda        Decimal?        @db.Decimal(5, 2)
+  panturrilhaDireita  Decimal?        @db.Decimal(5, 2)
+  panturrilhaEsquerda Decimal?        @db.Decimal(5, 2)
+  avaliacaoFisica     AvaliacaoFisica @relation(fields: [avaliacaoFisicaId], references: [id], onDelete: Cascade)
+}

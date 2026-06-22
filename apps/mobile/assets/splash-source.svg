@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1242" height="2436" viewBox="0 0 1242 2436">
+  <rect width="1242" height="2436" fill="#04060c"/>
+  <circle cx="621" cy="1030" r="280" fill="#0c1322" stroke="#b7ff4a" stroke-opacity=".28" stroke-width="10"/>
+  <path d="M405 1135V925h47l101 131V925h50v210h-47l-101-131v131z" fill="#b7ff4a"/>
+  <path d="M628 1135V925h136v47h-86v41h75v45h-75v77z" fill="#fff"/>
+  <text x="621" y="1375" fill="#ffffff" font-family="Arial, sans-serif" font-size="82" font-weight="700" text-anchor="middle">Nexora Fit</text>
+  <text x="621" y="1455" fill="#a8b3c4" font-family="Arial, sans-serif" font-size="34" font-weight="500" text-anchor="middle">Sua evolução, todos os dias.</text>
+</svg>

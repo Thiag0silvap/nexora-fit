@@ -1,0 +1,18 @@
+export enum UserRole {
+  ADMIN_ACADEMIA = 'ADMIN_ACADEMIA',
+  INSTRUTOR = 'INSTRUTOR',
+  ALUNO = 'ALUNO',
+  RECEPCAO = 'RECEPCAO',
+}
+
+export enum TrainingGoal {
+  HIPERTROFIA = 'HIPERTROFIA',
+  EMAGRECIMENTO = 'EMAGRECIMENTO',
+  CONDICIONAMENTO = 'CONDICIONAMENTO',
+}
+
+export enum WorkoutStatus {
+  ATIVO = 'ATIVO',
+  INATIVO = 'INATIVO',
+  ARQUIVADO = 'ARQUIVADO',
+}
