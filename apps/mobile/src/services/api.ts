@@ -24,7 +24,7 @@ import {
 
 // Em celular fisico, localhost aponta para o proprio celular.
 // Ajuste este IP quando o computador mudar de rede.
-export const API_BASE_URL = 'http://192.168.3.12:3000';
+export const API_BASE_URL = 'https://nexora-fit-api.onrender.com';
 
 type RequestOptions = {
   method?: string;
