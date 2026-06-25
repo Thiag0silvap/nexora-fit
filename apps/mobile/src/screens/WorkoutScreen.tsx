@@ -12,7 +12,6 @@ import {
 import { Badge } from '../components/Badge';
 import { ExerciseExecutionModal } from '../components/ExerciseExecutionModal';
 import { GlassCard } from '../components/GlassCard';
-import { MetricBadge } from '../components/MetricBadge';
 import { ProgressBar } from '../components/ProgressBar';
 import { RestTimer } from '../components/RestTimer';
 import {
@@ -66,6 +65,7 @@ export function WorkoutScreen({
   const [savingExecution, setSavingExecution] = useState(false);
   const [executionError, setExecutionError] = useState<string | null>(null);
   const [restTimer, setRestTimer] = useState<ActiveRestTimer | null>(null);
+  const [expandedExerciseId, setExpandedExerciseId] = useState<string | null>(null);
   const alunoNome = profile?.usuario.nome ?? workout?.aluno.usuario.nome ?? 'Aluno';
   const primeiroNome = alunoNome.split(' ')[0] || 'Aluno';
   const instrutorNome = workout?.instrutor.usuario.nome ?? 'Instrutor';
@@ -87,6 +87,7 @@ export function WorkoutScreen({
   useEffect(() => {
     if (!workout?.divisoes.length) {
       setSelectedDivisionId(null);
+      setExpandedExerciseId(null);
       return;
     }
 
@@ -98,6 +99,10 @@ export function WorkoutScreen({
       setSelectedDivisionId(workout.divisoes[0].id);
     }
   }, [selectedDivisionId, workout]);
+
+  useEffect(() => {
+    setExpandedExerciseId(null);
+  }, [selectedDivisionId]);
 
   useEffect(() => {
     if (!restTimer || restTimer.status !== 'running') {
@@ -152,6 +157,10 @@ export function WorkoutScreen({
     setExecutionError(null);
     setSelectedExercise(exercise);
     onSuccessDismiss();
+  }
+
+  function toggleExercise(exerciseId: string) {
+    setExpandedExerciseId((current) => current === exerciseId ? null : exerciseId);
   }
 
   function closeExecutionModal() {
@@ -337,78 +346,134 @@ export function WorkoutScreen({
               </View>
             </View>
 
-            {selectedDivision.exerciciosDivisao.map((item) => (
-              <View
-                key={item.id}
-                style={[
-                  styles.exerciseCard,
-                  completedExercises[item.id] ? styles.exerciseCardDone : null,
-                ]}
-              >
-                <View style={styles.exerciseHeader}>
-                  <View style={styles.exerciseTitleWrap}>
-                    <Text style={styles.exerciseName}>{item.exercicio.nome}</Text>
-                    <Text style={styles.exerciseGroup}>
-                      {formatEnum(item.exercicio.grupoMuscular)}
-                    </Text>
-                  </View>
-                  {completedExercises[item.id] ? (
-                    <Badge label="Concluido" tone="green" />
-                  ) : (
-                    <Badge label={item.exercicio.grupoMuscular} tone="purple" />
-                  )}
-                </View>
+            {selectedDivision.exerciciosDivisao.map((item) => {
+              const isExpanded = expandedExerciseId === item.id;
+              const isCompleted = Boolean(completedExercises[item.id]);
+              const isResting =
+                restTimer?.exerciseId === item.id && restTimer.status === 'running';
 
-                <View style={styles.metrics}>
-                  <MetricBadge label="Series" value={String(item.series)} />
-                  <MetricBadge label="Repeticoes" value={item.repeticoes} />
-                  <MetricBadge
-                    label="Descanso"
-                    value={item.descansoSegundos ? `${item.descansoSegundos}s` : '-'}
-                  />
-                </View>
-
-                {item.observacao ? (
-                  <Text style={styles.exerciseNote}>{item.observacao}</Text>
-                ) : null}
-
-                <HistoryCard latestExecution={latestExecutions[item.id] ?? null} />
-
-                <RestTimer
-                  durationSeconds={item.descansoSegundos}
-                  remainingSeconds={
-                    restTimer?.exerciseId === item.id
-                      ? restTimer.remainingSeconds
-                      : undefined
-                  }
-                  status={
-                    restTimer?.exerciseId === item.id
-                      ? restTimer.status
-                      : 'idle'
-                  }
-                  onCancel={() => cancelRest(item.id)}
-                  onStart={() => startRest(item)}
-                />
-
-                <Pressable
-                  onPress={() => openExecutionModal(item)}
-                  style={({ pressed }) => [
-                    styles.registerButton,
-                    completedExercises[item.id] ? styles.registerButtonDone : null,
-                    pressed ? styles.registerButtonPressed : null,
+              return (
+                <View
+                  key={item.id}
+                  style={[
+                    styles.exerciseCard,
+                    isExpanded ? styles.exerciseCardExpanded : null,
+                    isCompleted ? styles.exerciseCardDone : null,
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.registerText,
-                      completedExercises[item.id] ? styles.registerTextDone : null,
+                  <Pressable
+                    accessibilityHint="Expande ou recolhe os detalhes do exercicio"
+                    accessibilityRole="button"
+                    accessibilityState={{ expanded: isExpanded }}
+                    onPress={() => toggleExercise(item.id)}
+                    style={({ pressed }) => [
+                      styles.exerciseSummary,
+                      pressed ? styles.exerciseSummaryPressed : null,
                     ]}
                   >
-                    {completedExercises[item.id] ? 'Concluido' : 'Registrar carga'}
-                  </Text>
-                </Pressable>
-              </View>
-            ))}
+                    <View style={styles.exerciseSummaryTop}>
+                      <View style={styles.exerciseTitleWrap}>
+                        <Text numberOfLines={1} style={styles.exerciseName}>
+                          {item.exercicio.nome}
+                        </Text>
+                        <View style={styles.exerciseMetaRow}>
+                          <Text numberOfLines={1} style={styles.exerciseGroup}>
+                            {formatEnum(item.exercicio.grupoMuscular)}
+                          </Text>
+                          {isResting ? (
+                            <View style={styles.restingIndicator}>
+                              <View style={styles.restingDot} />
+                              <Text style={styles.restingText}>
+                                {formatTimer(restTimer.remainingSeconds)}
+                              </Text>
+                            </View>
+                          ) : null}
+                        </View>
+                      </View>
+
+                      <View style={styles.exerciseStatusArea}>
+                        <View
+                          style={[
+                            styles.compactStatus,
+                            isCompleted
+                              ? styles.compactStatusDone
+                              : styles.compactStatusPending,
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.compactStatusText,
+                              isCompleted ? styles.compactStatusTextDone : null,
+                            ]}
+                          >
+                            {isCompleted ? 'Concluido' : 'Pendente'}
+                          </Text>
+                        </View>
+                        <View style={styles.expandButton}>
+                          <Text style={styles.expandButtonText}>{isExpanded ? '-' : '+'}</Text>
+                        </View>
+                      </View>
+                    </View>
+
+                    <View style={styles.compactMetrics}>
+                      <CompactMetric label="Series" value={String(item.series)} />
+                      <CompactMetric label="Reps" value={item.repeticoes} />
+                      <CompactMetric
+                        label="Descanso"
+                        value={item.descansoSegundos ? `${item.descansoSegundos}s` : '-'}
+                      />
+                    </View>
+                  </Pressable>
+
+                  {isExpanded ? (
+                    <View style={styles.exerciseDetails}>
+                      {item.observacao ? (
+                        <View style={styles.exerciseNotePanel}>
+                          <Text style={styles.exerciseNoteLabel}>Orientacao</Text>
+                          <Text style={styles.exerciseNote}>{item.observacao}</Text>
+                        </View>
+                      ) : null}
+
+                      <HistoryCard latestExecution={latestExecutions[item.id] ?? null} />
+
+                      <RestTimer
+                        durationSeconds={item.descansoSegundos}
+                        remainingSeconds={
+                          restTimer?.exerciseId === item.id
+                            ? restTimer.remainingSeconds
+                            : undefined
+                        }
+                        status={
+                          restTimer?.exerciseId === item.id
+                            ? restTimer.status
+                            : 'idle'
+                        }
+                        onCancel={() => cancelRest(item.id)}
+                        onStart={() => startRest(item)}
+                      />
+
+                      <Pressable
+                        onPress={() => openExecutionModal(item)}
+                        style={({ pressed }) => [
+                          styles.registerButton,
+                          isCompleted ? styles.registerButtonDone : null,
+                          pressed ? styles.registerButtonPressed : null,
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.registerText,
+                            isCompleted ? styles.registerTextDone : null,
+                          ]}
+                        >
+                          {isCompleted ? 'Concluido' : 'Registrar carga'}
+                        </Text>
+                      </Pressable>
+                    </View>
+                  ) : null}
+                </View>
+              );
+            })}
           </GlassCard>
         ) : null}
       </ScrollView>
@@ -447,6 +512,15 @@ function HistoryCard({ latestExecution }: { latestExecution: LatestExecution }) 
           {formatDate(latestExecution.ultimaExecucao)}
         </Text>
       </View>
+    </View>
+  );
+}
+
+function CompactMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <View style={styles.compactMetric}>
+      <Text style={styles.compactMetricValue}>{value}</Text>
+      <Text style={styles.compactMetricLabel}>{label}</Text>
     </View>
   );
 }
@@ -542,6 +616,14 @@ function formatDate(value?: string | null) {
   }
 
   return date.toLocaleDateString('pt-BR');
+}
+
+function formatTimer(totalSeconds: number) {
+  const safeSeconds = Math.max(0, Math.floor(totalSeconds));
+  const minutes = Math.floor(safeSeconds / 60);
+  const seconds = safeSeconds % 60;
+
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
 function formatEnum(value?: string | null) {
@@ -872,46 +954,161 @@ const styles = StyleSheet.create({
   exerciseCard: {
     backgroundColor: 'rgba(5,8,14,0.76)',
     borderColor: 'rgba(255,255,255,0.08)',
-    borderRadius: 22,
+    borderRadius: 18,
     borderWidth: 1,
-    marginBottom: 10,
-    padding: 14,
+    marginBottom: 8,
+    overflow: 'hidden',
+  },
+  exerciseCardExpanded: {
+    borderColor: 'rgba(183,255,74,0.22)',
   },
   exerciseCardDone: {
     borderColor: 'rgba(183,255,74,0.35)',
-    backgroundColor: 'rgba(22,38,20,0.72)',
+    backgroundColor: 'rgba(19,32,19,0.72)',
   },
-  exerciseHeader: {
-    alignItems: 'flex-start',
+  exerciseSummary: {
+    paddingHorizontal: 13,
+    paddingVertical: 11,
+  },
+  exerciseSummaryPressed: {
+    backgroundColor: 'rgba(255,255,255,0.035)',
+  },
+  exerciseSummaryTop: {
+    alignItems: 'center',
     flexDirection: 'row',
     gap: 10,
-    justifyContent: 'space-between',
   },
   exerciseTitleWrap: {
     flex: 1,
+    minWidth: 0,
   },
   exerciseName: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '900',
-    lineHeight: 21,
+    lineHeight: 19,
+  },
+  exerciseMetaRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 3,
   },
   exerciseGroup: {
     color: '#8E9AAF',
-    fontSize: 12,
+    flexShrink: 1,
+    fontSize: 11,
     fontWeight: '800',
-    marginTop: 4,
   },
-  metrics: {
+  restingIndicator: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(183,255,74,0.09)',
+    borderRadius: 999,
     flexDirection: 'row',
-    gap: 8,
-    marginTop: 14,
+    gap: 5,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+  },
+  restingDot: {
+    backgroundColor: '#B7FF4A',
+    borderRadius: 999,
+    height: 5,
+    width: 5,
+  },
+  restingText: {
+    color: '#DDFEC6',
+    fontSize: 10,
+    fontVariant: ['tabular-nums'],
+    fontWeight: '900',
+  },
+  exerciseStatusArea: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 7,
+  },
+  compactStatus: {
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+  },
+  compactStatusPending: {
+    backgroundColor: 'rgba(255,255,255,0.07)',
+  },
+  compactStatusDone: {
+    backgroundColor: 'rgba(183,255,74,0.14)',
+  },
+  compactStatusText: {
+    color: '#9EAABC',
+    fontSize: 9,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+  },
+  compactStatusTextDone: {
+    color: '#DDFEC6',
+  },
+  expandButton: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.07)',
+    borderRadius: 10,
+    height: 28,
+    justifyContent: 'center',
+    width: 28,
+  },
+  expandButtonText: {
+    color: '#E9EEF6',
+    fontSize: 18,
+    fontWeight: '700',
+    lineHeight: 20,
+  },
+  compactMetrics: {
+    flexDirection: 'row',
+    gap: 6,
+    marginTop: 9,
+  },
+  compactMetric: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.045)',
+    borderRadius: 9,
+    flex: 1,
+    flexDirection: 'row',
+    gap: 5,
+    justifyContent: 'center',
+    minHeight: 27,
+    paddingHorizontal: 7,
+  },
+  compactMetricValue: {
+    color: '#F7FAFF',
+    fontSize: 11,
+    fontWeight: '900',
+  },
+  compactMetricLabel: {
+    color: '#7F8A9D',
+    fontSize: 9,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+  },
+  exerciseDetails: {
+    borderTopColor: 'rgba(255,255,255,0.07)',
+    borderTopWidth: 1,
+    padding: 13,
+    paddingTop: 12,
+  },
+  exerciseNotePanel: {
+    backgroundColor: 'rgba(255,255,255,0.045)',
+    borderRadius: 14,
+    padding: 11,
+  },
+  exerciseNoteLabel: {
+    color: '#8E9AAF',
+    fontSize: 9,
+    fontWeight: '900',
+    marginBottom: 5,
+    textTransform: 'uppercase',
   },
   exerciseNote: {
     color: '#B8C2D1',
     fontSize: 13,
     lineHeight: 19,
-    marginTop: 12,
   },
   historyCard: {
     backgroundColor: 'rgba(255,255,255,0.06)',

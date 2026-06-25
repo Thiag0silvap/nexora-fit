@@ -21,7 +21,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#04060C"
-      }
+      },
+      "package": "com.thiago.pereira23.nexorafit"
     },
     "extra": {
       "eas": {
