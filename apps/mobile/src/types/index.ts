@@ -160,6 +160,30 @@ export type PhysicalEvaluation = {
   };
 };
 
+export type EvaluationMetricKey =
+  | 'peso'
+  | 'cintura'
+  | 'abdomen'
+  | 'peitoral'
+  | 'bracoDireito'
+  | 'bracoEsquerdo'
+  | 'coxaDireita'
+  | 'coxaEsquerda'
+  | 'panturrilhaDireita'
+  | 'panturrilhaEsquerda';
+
+export type EvaluationTrend = 'increased' | 'decreased' | 'equal' | 'unavailable';
+
+export type EvaluationComparisonPoint = {
+  key: EvaluationMetricKey;
+  label: string;
+  unit: 'kg' | 'cm';
+  currentValue: number | null;
+  previousValue: number | null;
+  difference: number | null;
+  trend: EvaluationTrend;
+};
+
 export type CreatePhysicalEvaluationPayload = {
   alunoId: string;
   peso?: number;

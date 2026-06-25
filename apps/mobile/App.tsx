@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { GlassCard } from './src/components/GlassCard';
+import { EvaluationHistoryScreen } from './src/screens/EvaluationHistoryScreen';
 import { InstructorStudentsScreen } from './src/screens/InstructorStudentsScreen';
 import { InstructorStudentWorkoutScreen } from './src/screens/InstructorStudentWorkoutScreen';
 import { LoginScreen } from './src/screens/LoginScreen';
@@ -40,6 +41,7 @@ export default function App() {
   const [executionSuccess, setExecutionSuccess] = useState<string | null>(null);
   const [latestExecutions, setLatestExecutions] =
     useState<LatestExecutionsByWorkoutExercise>({});
+  const [studentScreen, setStudentScreen] = useState<'workout' | 'evaluations'>('workout');
 
   async function loadLatestExecutions(token: string, workoutData: ActiveWorkout) {
     const exercises = workoutData.divisoes.flatMap(
@@ -131,6 +133,7 @@ export default function App() {
       setSelectedInstructorStudent(null);
       setCompletedExercises({});
       setExecutionSuccess(null);
+      setStudentScreen('workout');
 
       if (response.user.role === 'ALUNO') {
         await loadStudentData(response.accessToken);
@@ -157,6 +160,7 @@ export default function App() {
     setCompletedExercises({});
     setExecutionSuccess(null);
     setLatestExecutions({});
+    setStudentScreen('workout');
   }
 
   async function handleRegisterExecution(
@@ -192,19 +196,29 @@ export default function App() {
     <>
       <StatusBar style="light" />
       {accessToken && authenticatedUser?.role === 'ALUNO' ? (
-        <WorkoutScreen
-          error={screenError}
-          loading={screenLoading}
-          onLogout={handleLogout}
-          onRegisterExecution={handleRegisterExecution}
-          onRetry={() => loadStudentData(accessToken)}
-          onSuccessDismiss={() => setExecutionSuccess(null)}
-          profile={profile}
-          completedExercises={completedExercises}
-          executionSuccess={executionSuccess}
-          latestExecutions={latestExecutions}
-          workout={workout}
-        />
+        studentScreen === 'evaluations' && profile ? (
+          <EvaluationHistoryScreen
+            alunoId={profile.aluno.id}
+            onBack={() => setStudentScreen('workout')}
+            onLogout={handleLogout}
+            token={accessToken}
+          />
+        ) : (
+          <WorkoutScreen
+            error={screenError}
+            loading={screenLoading}
+            onLogout={handleLogout}
+            onOpenEvaluationHistory={() => setStudentScreen('evaluations')}
+            onRegisterExecution={handleRegisterExecution}
+            onRetry={() => loadStudentData(accessToken)}
+            onSuccessDismiss={() => setExecutionSuccess(null)}
+            profile={profile}
+            completedExercises={completedExercises}
+            executionSuccess={executionSuccess}
+            latestExecutions={latestExecutions}
+            workout={workout}
+          />
+        )
       ) : accessToken && authenticatedUser?.role === 'INSTRUTOR' ? (
         selectedInstructorStudent ? (
           <InstructorStudentWorkoutScreen

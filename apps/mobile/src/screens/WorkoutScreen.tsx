@@ -32,6 +32,7 @@ type WorkoutScreenProps = {
   executionSuccess?: string | null;
   latestExecutions: LatestExecutionsByWorkoutExercise;
   onLogout: () => void;
+  onOpenEvaluationHistory: () => void;
   onRegisterExecution: (
     exercise: WorkoutExercise,
     values: Omit<CreateExecutionPayload, 'exercicioDivisaoId'>,
@@ -56,6 +57,7 @@ export function WorkoutScreen({
   executionSuccess,
   latestExecutions,
   onLogout,
+  onOpenEvaluationHistory,
   onRegisterExecution,
   onRetry,
   onSuccessDismiss,
@@ -208,6 +210,22 @@ export function WorkoutScreen({
             <Text style={styles.logoutText}>Sair</Text>
           </Pressable>
         </View>
+
+        <Pressable
+          onPress={onOpenEvaluationHistory}
+          style={({ pressed }) => [
+            styles.evaluationHistoryButton,
+            pressed ? styles.evaluationHistoryButtonPressed : null,
+          ]}
+        >
+          <View style={styles.evaluationHistoryCopy}>
+            <Text style={styles.evaluationHistoryLabel}>Sua evolução</Text>
+            <Text style={styles.evaluationHistoryTitle}>Histórico de avaliações</Text>
+          </View>
+          <View style={styles.evaluationHistoryArrow}>
+            <Text style={styles.evaluationHistoryArrowText}>›</Text>
+          </View>
+        </Pressable>
 
         {hasWorkout ? (
           <ScrollView
@@ -700,6 +718,50 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     marginHorizontal: -20,
     overflow: 'visible',
+  },
+  evaluationHistoryButton: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(183,255,74,0.08)',
+    borderColor: 'rgba(183,255,74,0.18)',
+    borderRadius: 18,
+    borderWidth: 1,
+    flexDirection: 'row',
+    marginBottom: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  evaluationHistoryButtonPressed: {
+    backgroundColor: 'rgba(183,255,74,0.13)',
+    opacity: 0.84,
+  },
+  evaluationHistoryCopy: {
+    flex: 1,
+  },
+  evaluationHistoryLabel: {
+    color: '#8FA17B',
+    fontSize: 9,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+  },
+  evaluationHistoryTitle: {
+    color: '#EAFED5',
+    fontSize: 14,
+    fontWeight: '900',
+    marginTop: 3,
+  },
+  evaluationHistoryArrow: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(183,255,74,0.13)',
+    borderRadius: 12,
+    height: 34,
+    justifyContent: 'center',
+    width: 34,
+  },
+  evaluationHistoryArrowText: {
+    color: '#B7FF4A',
+    fontSize: 25,
+    fontWeight: '600',
+    lineHeight: 27,
   },
   workoutTabsContent: {
     gap: 10,
