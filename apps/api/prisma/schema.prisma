@@ -59,7 +59,8 @@ model Usuario {
   id         String     @id @default(uuid()) @db.Uuid
   academiaId String     @db.Uuid
   nome       String
-  email      String     @unique
+  username   String     @unique
+  email      String?    @unique
   senhaHash  String
   role       UserRole
   ativo      Boolean    @default(true)

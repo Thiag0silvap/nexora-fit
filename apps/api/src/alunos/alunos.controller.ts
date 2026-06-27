@@ -29,8 +29,16 @@ export class AlunosController {
 
   @Roles(UserRole.ADMIN_ACADEMIA, UserRole.RECEPCAO)
   @Get('inativo')
-  findInactiveByEmail(@CurrentUser() user: AuthUser, @Query('email') email: string) {
-    return this.alunosService.findInactiveByEmail(user, email);
+  findInactiveByEmail(
+    @CurrentUser() user: AuthUser,
+    @Query('email') email?: string,
+    @Query('username') username?: string,
+    @Query('identificador') identificador?: string,
+  ) {
+    return this.alunosService.findInactiveByIdentifier(
+      user,
+      identificador ?? username ?? email,
+    );
   }
 
   @Roles(UserRole.ADMIN_ACADEMIA, UserRole.RECEPCAO)

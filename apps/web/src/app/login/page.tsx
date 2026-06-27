@@ -18,7 +18,7 @@ export default function LoginPage() {
 function LoginContent() {
   const router = useRouter();
   const { login, user, loading, isAdminAllowed } = useAuth();
-  const [email, setEmail] = useState('');
+  const [identificador, setIdentificador] = useState('');
   const [senha, setSenha] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +42,7 @@ function LoginContent() {
     setBlockedProfile(false);
 
     try {
-      const authUser = await login(email, senha);
+      const authUser = await login(identificador, senha);
 
       if (authUser.role === 'INSTRUTOR') {
         router.replace('/admin/fichas');
@@ -89,14 +89,13 @@ function LoginContent() {
 
         <form onSubmit={handleSubmit}>
           <label>
-            Email
+            Usuário ou e-mail
             <input
-              autoComplete="email"
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="admin@fitgestao.com"
+              autoComplete="username"
+              onChange={(event) => setIdentificador(event.target.value)}
+              placeholder="admin ou admin@fitgestao.com"
               required
-              type="email"
-              value={email}
+              value={identificador}
             />
           </label>
 

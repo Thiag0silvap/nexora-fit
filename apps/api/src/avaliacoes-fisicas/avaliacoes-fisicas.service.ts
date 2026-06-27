@@ -18,6 +18,7 @@ const avaliacaoFisicaSelect = {
         select: {
           id: true,
           nome: true,
+          username: true,
           email: true,
         },
       },

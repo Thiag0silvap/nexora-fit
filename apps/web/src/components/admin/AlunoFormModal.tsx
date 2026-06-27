@@ -39,6 +39,7 @@ export function AlunoFormModal({
   onSubmit,
 }: AlunoFormModalProps) {
   const [nome, setNome] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [dataNascimento, setDataNascimento] = useState('');
@@ -56,6 +57,7 @@ export function AlunoFormModal({
 
   useEffect(() => {
     setNome(aluno?.usuario.nome ?? '');
+    setUsername(aluno?.usuario.username ?? '');
     setEmail(aluno?.usuario.email ?? '');
     setSenha('');
     setDataNascimento('');
@@ -75,8 +77,8 @@ export function AlunoFormModal({
       return;
     }
 
-    if (!email.trim()) {
-      setValidationError('Informe o email do aluno.');
+    if (username.trim().length < 3) {
+      setValidationError('Informe um username com pelo menos 3 caracteres.');
       return;
     }
 
@@ -102,7 +104,8 @@ export function AlunoFormModal({
       setValidationError(null);
       await onSubmit({
         nome: nome.trim(),
-        email: email.trim(),
+        username: username.trim(),
+        email: email.trim() || undefined,
         senha,
         dataNascimento: dataNascimento || undefined,
         sexo: (sexo || undefined) as Sexo | undefined,
@@ -116,7 +119,8 @@ export function AlunoFormModal({
     setValidationError(null);
     await onSubmit({
       nome: nome.trim(),
-      email: email.trim(),
+      username: username.trim(),
+      email: email.trim() || null,
       altura: normalizedAltura,
       pesoAtual: normalizedPeso,
       objetivo: (objetivo || undefined) as TrainingGoal | undefined,
@@ -150,11 +154,21 @@ export function AlunoFormModal({
             </label>
 
             <label>
-              Email
+              Username
+              <input
+                autoCapitalize="none"
+                onChange={(event) => setUsername(event.target.value)}
+                placeholder="thiago.pereira"
+                required
+                value={username}
+              />
+            </label>
+
+            <label>
+              Email opcional
               <input
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="thiago@email.com"
-                required
                 type="email"
                 value={email}
               />

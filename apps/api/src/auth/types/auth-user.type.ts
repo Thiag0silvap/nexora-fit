@@ -3,7 +3,8 @@ import { UserRole } from '@prisma/client';
 export type AuthUser = {
   id: string;
   nome: string;
-  email: string;
+  username: string;
+  email: string | null;
   role: UserRole;
   academiaId: string;
   instrutorId?: string;
@@ -11,7 +12,7 @@ export type AuthUser = {
 
 export type JwtPayload = {
   sub: string;
-  email: string;
+  username: string;
   role: UserRole;
   academiaId: string;
 };

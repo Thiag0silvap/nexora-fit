@@ -9,7 +9,7 @@ import { AuthProvider, useAuth } from '../../../contexts/AuthContext';
 import {
   createAluno,
   deleteAluno,
-  findInactiveAlunoByEmail,
+  findInactiveAlunoByIdentifier,
   getAlunos,
   reactivateAluno,
   updateAluno,
@@ -118,7 +118,14 @@ function AdminAlunosContent() {
     try {
       if (modalMode === 'create') {
         const createPayload = payload as CreateAlunoPayload;
-        const inactive = await findInactiveAlunoByEmail(accessToken, createPayload.email);
+        const inactive = await findInactiveAlunoByIdentifier(
+          accessToken,
+          createPayload.username,
+        ) ?? (
+          createPayload.email
+            ? await findInactiveAlunoByIdentifier(accessToken, createPayload.email)
+            : null
+        );
 
         if (inactive) {
           setModalMode(null);
@@ -256,6 +263,7 @@ function AdminAlunosContent() {
               <thead>
                 <tr>
                   <th>Nome</th>
+                  <th>Username</th>
                   <th>Email</th>
                   <th>Matrícula</th>
                   <th>Objetivo</th>
@@ -270,7 +278,8 @@ function AdminAlunosContent() {
                     <td>
                       <strong>{aluno.usuario.nome}</strong>
                     </td>
-                    <td>{aluno.usuario.email}</td>
+                    <td>{aluno.usuario.username}</td>
+                    <td>{aluno.usuario.email ?? 'Não informado'}</td>
                     <td>{aluno.matricula}</td>
                     <td>{formatEnum(aluno.objetivo)}</td>
                     <td>{formatWeight(aluno.pesoAtual)}</td>
@@ -306,7 +315,7 @@ function AdminAlunosContent() {
       {inactiveAluno ? (
         <ReactivationModal
           entity="Aluno"
-          record={{ nome: inactiveAluno.usuario.nome, email: inactiveAluno.usuario.email, matricula: inactiveAluno.matricula }}
+          record={{ nome: inactiveAluno.usuario.nome, username: inactiveAluno.usuario.username, email: inactiveAluno.usuario.email ?? 'Não informado', matricula: inactiveAluno.matricula }}
           saving={saving}
           error={formError}
           onClose={() => { if (!saving) { setInactiveAluno(null); setFormError(null); } }}

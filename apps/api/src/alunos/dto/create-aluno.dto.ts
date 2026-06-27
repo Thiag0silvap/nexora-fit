@@ -6,6 +6,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Matches,
   Min,
   MinLength,
 } from 'class-validator';
@@ -15,8 +16,14 @@ export class CreateAlunoDto {
   @MinLength(2)
   nome: string;
 
+  @IsString()
+  @MinLength(3)
+  @Matches(/^[a-zA-Z0-9._-]+$/)
+  username: string;
+
+  @IsOptional()
   @IsEmail()
-  email: string;
+  email?: string;
 
   @IsString()
   @MinLength(6)

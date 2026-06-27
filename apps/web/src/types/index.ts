@@ -3,7 +3,8 @@ export type UserRole = 'ADMIN_ACADEMIA' | 'INSTRUTOR' | 'ALUNO' | 'RECEPCAO';
 export type AuthUser = {
   id: string;
   nome: string;
-  email: string;
+  username: string;
+  email: string | null;
   role: UserRole;
   academiaId: string;
   instrutorId?: string;
@@ -34,7 +35,8 @@ export type Aluno = {
   usuario: {
     id: string;
     nome: string;
-    email: string;
+    username: string;
+    email: string | null;
   };
 };
 
@@ -46,14 +48,16 @@ export type Instrutor = {
   usuario: {
     id: string;
     nome: string;
-    email: string;
+    username: string;
+    email: string | null;
     role: UserRole;
   };
 };
 
 export type CreateAlunoPayload = {
   nome: string;
-  email: string;
+  username: string;
+  email?: string;
   senha: string;
   matricula?: string;
   dataNascimento?: string;
@@ -65,7 +69,8 @@ export type CreateAlunoPayload = {
 
 export type UpdateAlunoPayload = {
   nome?: string;
-  email?: string;
+  username?: string;
+  email?: string | null;
   altura?: number;
   pesoAtual?: number;
   objetivo?: TrainingGoal;
@@ -74,7 +79,8 @@ export type UpdateAlunoPayload = {
 
 export type CreateInstrutorPayload = {
   nome: string;
-  email: string;
+  username: string;
+  email?: string;
   senha: string;
   cref?: string;
   especialidade?: string;
@@ -82,7 +88,8 @@ export type CreateInstrutorPayload = {
 
 export type UpdateInstrutorPayload = {
   nome?: string;
-  email?: string;
+  username?: string;
+  email?: string | null;
   cref?: string;
   especialidade?: string;
   ativo?: boolean;

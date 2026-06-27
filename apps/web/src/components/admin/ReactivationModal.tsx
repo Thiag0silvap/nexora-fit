@@ -6,7 +6,8 @@ type Props = {
   entity: 'Aluno' | 'Instrutor';
   record: {
     nome: string;
-    email: string;
+    username: string;
+    email?: string | null;
     matricula?: string;
   };
   saving: boolean;
@@ -26,7 +27,7 @@ export function ReactivationModal({ entity, record, saving, error, onClose, onRe
     setSenha('');
     setConfirmacao('');
     setValidationError(null);
-  }, [record.email]);
+  }, [record.username]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -69,7 +70,8 @@ export function ReactivationModal({ entity, record, saving, error, onClose, onRe
               <p>Deseja reativar este cadastro mantendo todo o histórico existente?</p>
               <dl>
                 <div><dt>Nome</dt><dd>{record.nome}</dd></div>
-                <div><dt>Email</dt><dd>{record.email}</dd></div>
+                <div><dt>Username</dt><dd>{record.username}</dd></div>
+                <div><dt>Email</dt><dd>{record.email ?? 'Não informado'}</dd></div>
                 {record.matricula ? <div><dt>Matrícula</dt><dd>{record.matricula}</dd></div> : null}
               </dl>
             </div>

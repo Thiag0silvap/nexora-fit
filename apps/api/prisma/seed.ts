@@ -37,6 +37,7 @@ async function main() {
     where: { email: 'admin@fitgestao.com' },
     update: {
       nome: 'Admin',
+      username: 'admin',
       senhaHash,
       role: UserRole.ADMIN_ACADEMIA,
       ativo: true,
@@ -44,6 +45,7 @@ async function main() {
     create: {
       academiaId: academia.id,
       nome: 'Admin',
+      username: 'admin',
       email: 'admin@fitgestao.com',
       senhaHash,
       role: UserRole.ADMIN_ACADEMIA,
@@ -55,6 +57,7 @@ async function main() {
     where: { email: 'instrutor@fitgestao.com' },
     update: {
       nome: 'Instrutor Demo',
+      username: 'instrutor.demo',
       senhaHash,
       role: UserRole.INSTRUTOR,
       ativo: true,
@@ -62,6 +65,7 @@ async function main() {
     create: {
       academiaId: academia.id,
       nome: 'Instrutor Demo',
+      username: 'instrutor.demo',
       email: 'instrutor@fitgestao.com',
       senhaHash,
       role: UserRole.INSTRUTOR,
@@ -177,6 +181,7 @@ async function main() {
     update: {
       academiaId: academia.id,
       nome: 'Aluno Mobile Teste',
+      username: 'aluno.mobile',
       senhaHash,
       role: UserRole.ALUNO,
       ativo: true,
@@ -184,6 +189,7 @@ async function main() {
     create: {
       academiaId: academia.id,
       nome: 'Aluno Mobile Teste',
+      username: 'aluno.mobile',
       email: 'mobile.aluno.1782014327117@fitgestao.com',
       senhaHash,
       role: UserRole.ALUNO,

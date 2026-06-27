@@ -11,6 +11,7 @@ export class UsuariosService {
         id: true,
         academiaId: true,
         nome: true,
+        username: true,
         email: true,
         role: true,
         ativo: true,

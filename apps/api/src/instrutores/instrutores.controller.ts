@@ -42,8 +42,16 @@ export class InstrutoresController {
 
   @Roles(UserRole.ADMIN_ACADEMIA)
   @Get('inativo')
-  findInactiveByEmail(@CurrentUser() user: AuthUser, @Query('email') email: string) {
-    return this.instrutoresService.findInactiveByEmail(user, email);
+  findInactiveByEmail(
+    @CurrentUser() user: AuthUser,
+    @Query('email') email?: string,
+    @Query('username') username?: string,
+    @Query('identificador') identificador?: string,
+  ) {
+    return this.instrutoresService.findInactiveByIdentifier(
+      user,
+      identificador ?? username ?? email,
+    );
   }
 
   @Roles(UserRole.ADMIN_ACADEMIA)

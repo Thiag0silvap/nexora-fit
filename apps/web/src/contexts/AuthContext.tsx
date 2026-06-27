@@ -19,7 +19,7 @@ type AuthContextValue = {
   accessToken: string | null;
   user: AuthUser | null;
   loading: boolean;
-  login: (email: string, senha: string) => Promise<AuthUser>;
+  login: (identificador: string, senha: string) => Promise<AuthUser>;
   logout: () => void;
   isAdminAllowed: boolean;
 };
@@ -78,8 +78,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [clearSession, persistSession]);
 
   const login = useCallback(
-    async (email: string, senha: string) => {
-      const response = await loginRequest(email, senha);
+    async (identificador: string, senha: string) => {
+      const response = await loginRequest(identificador, senha);
       persistSession(response.accessToken, response.user);
       return response.user;
     },

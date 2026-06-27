@@ -25,6 +25,7 @@ const fichaResumoInclude = {
         select: {
           id: true,
           nome: true,
+          username: true,
           email: true,
         },
       },
@@ -38,6 +39,7 @@ const fichaResumoInclude = {
         select: {
           id: true,
           nome: true,
+          username: true,
           email: true,
         },
       },

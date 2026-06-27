@@ -74,7 +74,13 @@ function AdminFichasContent() {
     return [{
       id: user.instrutorId,
       ativo: true,
-      usuario: { id: user.id, nome: user.nome, email: user.email, role: user.role },
+      usuario: {
+        id: user.id,
+        nome: user.nome,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
     }];
   }, [user]);
 

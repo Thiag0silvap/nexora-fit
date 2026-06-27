@@ -21,6 +21,7 @@ const instrutorSelect = {
     select: {
       id: true,
       nome: true,
+      username: true,
       email: true,
       role: true,
     },
@@ -32,7 +33,11 @@ export class InstrutoresService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(user: AuthUser, createInstrutorDto: CreateInstrutorDto) {
-    await this.ensureEmailIsAvailable(createInstrutorDto.email);
+    const username = this.normalizeUsername(createInstrutorDto.username);
+    const email = this.normalizeEmail(createInstrutorDto.email);
+
+    await this.ensureUsernameIsAvailable(username);
+    await this.ensureEmailIsAvailable(email);
     await this.ensureCrefIsAvailable(createInstrutorDto.cref);
 
     const senhaHash = await bcrypt.hash(createInstrutorDto.senha, 10);
@@ -43,7 +48,8 @@ export class InstrutoresService {
           data: {
             academiaId: user.academiaId,
             nome: createInstrutorDto.nome,
-            email: createInstrutorDto.email,
+            username,
+            email,
             senhaHash,
             role: UserRole.INSTRUTOR,
             ativo: true,
@@ -84,17 +90,23 @@ export class InstrutoresService {
     });
   }
 
-  async findInactiveByEmail(user: AuthUser, email: string) {
-    if (!email) return null;
+  async findInactiveByIdentifier(user: AuthUser, identifier?: string) {
+    if (!identifier) return null;
+
+    const normalizedUsername = this.normalizeUsername(identifier);
+    const email = this.normalizeEmail(identifier);
 
     return this.prisma.instrutor.findFirst({
       where: {
         ativo: false,
         usuario: {
           academiaId: user.academiaId,
-          email,
           role: UserRole.INSTRUTOR,
           ativo: false,
+          OR: [
+            { username: normalizedUsername },
+            ...(email ? [{ email }] : []),
+          ],
         },
       },
       select: instrutorSelect,
@@ -165,12 +177,21 @@ export class InstrutoresService {
     updateInstrutorDto: UpdateInstrutorDto,
   ) {
     const instrutor = await this.findInstrutorForAcademia(user, id);
+    const username =
+      updateInstrutorDto.username !== undefined
+        ? this.normalizeUsername(updateInstrutorDto.username)
+        : undefined;
+    const email =
+      updateInstrutorDto.email !== undefined
+        ? this.normalizeEmail(updateInstrutorDto.email)
+        : undefined;
 
-    if (updateInstrutorDto.email) {
-      await this.ensureEmailIsAvailable(
-        updateInstrutorDto.email,
-        instrutor.usuarioId,
-      );
+    if (username !== undefined) {
+      await this.ensureUsernameIsAvailable(username, instrutor.usuarioId);
+    }
+
+    if (email !== undefined) {
+      await this.ensureEmailIsAvailable(email, instrutor.usuarioId);
     }
 
     if (updateInstrutorDto.cref) {
@@ -181,6 +202,7 @@ export class InstrutoresService {
       return await this.prisma.$transaction(async (tx) => {
         if (
           updateInstrutorDto.nome !== undefined ||
+          updateInstrutorDto.username !== undefined ||
           updateInstrutorDto.email !== undefined ||
           updateInstrutorDto.ativo !== undefined
         ) {
@@ -190,7 +212,8 @@ export class InstrutoresService {
             },
             data: {
               nome: updateInstrutorDto.nome,
-              email: updateInstrutorDto.email,
+              username,
+              email,
               ativo: updateInstrutorDto.ativo,
             },
           });
@@ -262,7 +285,24 @@ export class InstrutoresService {
     return instrutor;
   }
 
-  private async ensureEmailIsAvailable(email: string, ignoredUsuarioId?: string) {
+  private async ensureUsernameIsAvailable(username: string, ignoredUsuarioId?: string) {
+    const usuario = await this.prisma.usuario.findUnique({
+      where: {
+        username,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (usuario && usuario.id !== ignoredUsuarioId) {
+      throw new ConflictException('Username ja cadastrado.');
+    }
+  }
+
+  private async ensureEmailIsAvailable(email?: string | null, ignoredUsuarioId?: string) {
+    if (!email) return;
+
     const usuario = await this.prisma.usuario.findUnique({
       where: {
         email,
@@ -275,6 +315,15 @@ export class InstrutoresService {
     if (usuario && usuario.id !== ignoredUsuarioId) {
       throw new ConflictException('Email ja cadastrado.');
     }
+  }
+
+  private normalizeUsername(username: string) {
+    return username.trim().toLowerCase();
+  }
+
+  private normalizeEmail(email?: string | null) {
+    const normalizedEmail = email?.trim().toLowerCase();
+    return normalizedEmail || null;
   }
 
   private async ensureCrefIsAvailable(cref?: string, ignoredInstrutorId?: string) {
@@ -314,6 +363,10 @@ export class InstrutoresService {
 
       if (target?.includes('email')) {
         throw new ConflictException('Email ja cadastrado.');
+      }
+
+      if (target?.includes('username')) {
+        throw new ConflictException('Username ja cadastrado.');
       }
 
       if (target?.includes('cref')) {

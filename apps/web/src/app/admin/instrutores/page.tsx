@@ -9,7 +9,7 @@ import { AuthProvider, useAuth } from '../../../contexts/AuthContext';
 import {
   createInstrutor,
   deleteInstrutor,
-  findInactiveInstrutorByEmail,
+  findInactiveInstrutorByIdentifier,
   getInstrutores,
   reactivateInstrutor,
   updateInstrutor,
@@ -122,7 +122,14 @@ function AdminInstrutoresContent() {
     try {
       if (modalMode === 'create') {
         const createPayload = payload as CreateInstrutorPayload;
-        const inactive = await findInactiveInstrutorByEmail(accessToken, createPayload.email);
+        const inactive = await findInactiveInstrutorByIdentifier(
+          accessToken,
+          createPayload.username,
+        ) ?? (
+          createPayload.email
+            ? await findInactiveInstrutorByIdentifier(accessToken, createPayload.email)
+            : null
+        );
 
         if (inactive) {
           setModalMode(null);
@@ -266,6 +273,7 @@ function AdminInstrutoresContent() {
               <thead>
                 <tr>
                   <th>Nome</th>
+                  <th>Username</th>
                   <th>Email</th>
                   <th>CREF</th>
                   <th>Especialidade</th>
@@ -279,7 +287,8 @@ function AdminInstrutoresContent() {
                     <td>
                       <strong>{instrutor.usuario.nome}</strong>
                     </td>
-                    <td>{instrutor.usuario.email}</td>
+                    <td>{instrutor.usuario.username}</td>
+                    <td>{instrutor.usuario.email ?? 'Não informado'}</td>
                     <td>{instrutor.cref || '-'}</td>
                     <td>{instrutor.especialidade || '-'}</td>
                     <td>
@@ -314,7 +323,7 @@ function AdminInstrutoresContent() {
       {inactiveInstrutor ? (
         <ReactivationModal
           entity="Instrutor"
-          record={{ nome: inactiveInstrutor.usuario.nome, email: inactiveInstrutor.usuario.email }}
+          record={{ nome: inactiveInstrutor.usuario.nome, username: inactiveInstrutor.usuario.username, email: inactiveInstrutor.usuario.email ?? 'Não informado' }}
           saving={saving}
           error={formError}
           onClose={() => { if (!saving) { setInactiveInstrutor(null); setFormError(null); } }}

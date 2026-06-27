@@ -22,6 +22,7 @@ const alunoSelect = {
     select: {
       id: true,
       nome: true,
+      username: true,
       email: true,
     },
   },
@@ -32,7 +33,11 @@ export class AlunosService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(user: AuthUser, createAlunoDto: CreateAlunoDto) {
-    await this.ensureEmailIsAvailable(createAlunoDto.email);
+    const username = this.normalizeUsername(createAlunoDto.username);
+    const email = this.normalizeEmail(createAlunoDto.email);
+
+    await this.ensureUsernameIsAvailable(username);
+    await this.ensureEmailIsAvailable(email);
 
     const senhaHash = await bcrypt.hash(createAlunoDto.senha, 10);
 
@@ -44,7 +49,8 @@ export class AlunosService {
             data: {
               academiaId: user.academiaId,
               nome: createAlunoDto.nome,
-              email: createAlunoDto.email,
+              username,
+              email,
               senhaHash,
               role: UserRole.ALUNO,
               ativo: true,
@@ -95,17 +101,23 @@ export class AlunosService {
     });
   }
 
-  async findInactiveByEmail(user: AuthUser, email: string) {
-    if (!email) return null;
+  async findInactiveByIdentifier(user: AuthUser, identifier?: string) {
+    if (!identifier) return null;
+
+    const normalizedUsername = this.normalizeUsername(identifier);
+    const email = this.normalizeEmail(identifier);
 
     return this.prisma.aluno.findFirst({
       where: {
         ativo: false,
         usuario: {
           academiaId: user.academiaId,
-          email,
           role: UserRole.ALUNO,
           ativo: false,
+          OR: [
+            { username: normalizedUsername },
+            ...(email ? [{ email }] : []),
+          ],
         },
       },
       select: alunoSelect,
@@ -161,15 +173,28 @@ export class AlunosService {
 
   async update(user: AuthUser, id: string, updateAlunoDto: UpdateAlunoDto) {
     const aluno = await this.findAlunoForAcademia(user, id);
+    const username =
+      updateAlunoDto.username !== undefined
+        ? this.normalizeUsername(updateAlunoDto.username)
+        : undefined;
+    const email =
+      updateAlunoDto.email !== undefined
+        ? this.normalizeEmail(updateAlunoDto.email)
+        : undefined;
 
-    if (updateAlunoDto.email) {
-      await this.ensureEmailIsAvailable(updateAlunoDto.email, aluno.usuarioId);
+    if (username !== undefined) {
+      await this.ensureUsernameIsAvailable(username, aluno.usuarioId);
+    }
+
+    if (email !== undefined) {
+      await this.ensureEmailIsAvailable(email, aluno.usuarioId);
     }
 
     try {
       return await this.prisma.$transaction(async (tx) => {
         if (
           updateAlunoDto.nome !== undefined ||
+          updateAlunoDto.username !== undefined ||
           updateAlunoDto.email !== undefined ||
           updateAlunoDto.ativo !== undefined
         ) {
@@ -179,7 +204,8 @@ export class AlunosService {
             },
             data: {
               nome: updateAlunoDto.nome,
-              email: updateAlunoDto.email,
+              username,
+              email,
               ativo: updateAlunoDto.ativo,
             },
           });
@@ -252,7 +278,24 @@ export class AlunosService {
     return aluno;
   }
 
-  private async ensureEmailIsAvailable(email: string, ignoredUsuarioId?: string) {
+  private async ensureUsernameIsAvailable(username: string, ignoredUsuarioId?: string) {
+    const usuario = await this.prisma.usuario.findUnique({
+      where: {
+        username,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (usuario && usuario.id !== ignoredUsuarioId) {
+      throw new ConflictException('Username ja cadastrado.');
+    }
+  }
+
+  private async ensureEmailIsAvailable(email?: string | null, ignoredUsuarioId?: string) {
+    if (!email) return;
+
     const usuario = await this.prisma.usuario.findUnique({
       where: {
         email,
@@ -265,6 +308,15 @@ export class AlunosService {
     if (usuario && usuario.id !== ignoredUsuarioId) {
       throw new ConflictException('Email ja cadastrado.');
     }
+  }
+
+  private normalizeUsername(username: string) {
+    return username.trim().toLowerCase();
+  }
+
+  private normalizeEmail(email?: string | null) {
+    const normalizedEmail = email?.trim().toLowerCase();
+    return normalizedEmail || null;
   }
 
   private async generateNextMatricula(tx: Prisma.TransactionClient) {
@@ -301,6 +353,10 @@ export class AlunosService {
 
       if (target?.includes('email')) {
         throw new ConflictException('Email ja cadastrado.');
+      }
+
+      if (target?.includes('username')) {
+        throw new ConflictException('Username ja cadastrado.');
       }
 
       if (target?.includes('matricula')) {

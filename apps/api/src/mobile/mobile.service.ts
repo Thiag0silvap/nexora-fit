@@ -15,6 +15,7 @@ const fichaMobileInclude = {
         select: {
           id: true,
           nome: true,
+          username: true,
           email: true,
         },
       },
@@ -29,6 +30,7 @@ const fichaMobileInclude = {
         select: {
           id: true,
           nome: true,
+          username: true,
           email: true,
         },
       },
@@ -109,6 +111,7 @@ export class MobileService {
           select: {
             id: true,
             nome: true,
+            username: true,
             email: true,
             role: true,
             ativo: true,

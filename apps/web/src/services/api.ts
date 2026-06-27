@@ -56,10 +56,10 @@ async function request<T>(path: string, options: RequestOptions = {}) {
   return data as T;
 }
 
-export function login(email: string, senha: string) {
+export function login(identificador: string, senha: string) {
   return request<LoginResponse>('/auth/login', {
     method: 'POST',
-    body: { email, senha },
+    body: { identificador, email: identificador, senha },
   });
 }
 
@@ -95,8 +95,15 @@ export function deleteAluno(token: string, alunoId: string) {
   });
 }
 
-export function findInactiveAlunoByEmail(token: string, email: string) {
-  return request<Aluno | null>(`/alunos/inativo?email=${encodeURIComponent(email)}`, { token });
+export function findInactiveAlunoByIdentifier(token: string, identificador: string) {
+  return request<Aluno | null>(
+    `/alunos/inativo?identificador=${encodeURIComponent(identificador)}`,
+    { token },
+  );
+}
+
+export function findInactiveAlunoByEmail(token: string, emailOrIdentifier: string) {
+  return findInactiveAlunoByIdentifier(token, emailOrIdentifier);
 }
 
 export function reactivateAluno(token: string, alunoId: string, senha: string) {
@@ -137,11 +144,15 @@ export function deleteInstrutor(token: string, instrutorId: string) {
   });
 }
 
-export function findInactiveInstrutorByEmail(token: string, email: string) {
+export function findInactiveInstrutorByIdentifier(token: string, identificador: string) {
   return request<Instrutor | null>(
-    `/instrutores/inativo?email=${encodeURIComponent(email)}`,
+    `/instrutores/inativo?identificador=${encodeURIComponent(identificador)}`,
     { token },
   );
+}
+
+export function findInactiveInstrutorByEmail(token: string, emailOrIdentifier: string) {
+  return findInactiveInstrutorByIdentifier(token, emailOrIdentifier);
 }
 
 export function reactivateInstrutor(token: string, instrutorId: string, senha: string) {

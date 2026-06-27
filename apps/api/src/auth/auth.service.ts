@@ -22,9 +22,18 @@ export class AuthService {
   ) {}
 
   async login(loginDto: LoginDto) {
-    const usuario = await this.prisma.usuario.findUnique({
+    const identificador = loginDto.identificador ?? loginDto.email;
+
+    if (!identificador) {
+      throw new UnauthorizedException('Informe usuario ou email.');
+    }
+
+    const usuario = await this.prisma.usuario.findFirst({
       where: {
-        email: loginDto.email,
+        OR: [
+          { username: identificador },
+          { email: identificador },
+        ],
       },
       include: {
         instrutor: {
@@ -48,15 +57,72 @@ export class AuthService {
     const user: AuthUser = {
       id: usuario.id,
       nome: usuario.nome,
+      username: usuario.username,
       email: usuario.email,
       role: usuario.role,
       academiaId: usuario.academiaId,
       instrutorId: usuario.instrutor?.id,
     };
 
+    return {
+      ...(await this.createTokens(user)),
+      user,
+    };
+  }
+
+  async refresh(refreshToken: string) {
+    try {
+      const payload = await this.jwtService.verifyAsync<JwtPayload>(refreshToken, {
+        secret: refreshSecret,
+      });
+
+      const usuario = await this.prisma.usuario.findFirst({
+        where: {
+          id: payload.sub,
+          ativo: true,
+        },
+        select: {
+          id: true,
+          nome: true,
+          username: true,
+          email: true,
+          role: true,
+          academiaId: true,
+          instrutor: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
+      if (!usuario) {
+        throw new UnauthorizedException('Sessao expirada.');
+      }
+
+      const user: AuthUser = {
+        id: usuario.id,
+        nome: usuario.nome,
+        username: usuario.username,
+        email: usuario.email,
+        role: usuario.role,
+        academiaId: usuario.academiaId,
+        instrutorId: usuario.instrutor?.id,
+      };
+
+      return {
+        ...(await this.createTokens(user)),
+        user,
+      };
+    } catch {
+      throw new UnauthorizedException('Sessao expirada.');
+    }
+  }
+
+  private async createTokens(user: AuthUser) {
     const payload: JwtPayload = {
       sub: user.id,
-      email: user.email,
+      username: user.username,
       role: user.role,
       academiaId: user.academiaId,
     };
@@ -75,7 +141,6 @@ export class AuthService {
     return {
       accessToken,
       refreshToken,
-      user,
     };
   }
 }
