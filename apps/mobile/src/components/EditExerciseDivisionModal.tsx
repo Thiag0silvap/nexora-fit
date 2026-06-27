@@ -104,7 +104,8 @@ export function EditExerciseDivisionModal({
   return (
     <Modal animationType="fade" transparent visible={visible} onRequestClose={onCancel}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 24 : 0}
         style={styles.overlay}
       >
         <Pressable style={styles.backdrop} onPress={saving ? undefined : onCancel} />
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
     maxHeight: '90%',
     overflow: 'hidden',
   },
-  panelContent: { padding: 20, paddingBottom: 34 },
+  panelContent: { padding: 20, paddingBottom: 72 },
   handle: {
     alignSelf: 'center',
     backgroundColor: 'rgba(255,255,255,0.22)',

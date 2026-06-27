@@ -32,6 +32,7 @@ type WorkoutScreenProps = {
   executionSuccess?: string | null;
   latestExecutions: LatestExecutionsByWorkoutExercise;
   onLogout: () => void;
+  onBackToDashboard: () => void;
   onOpenEvaluationHistory: () => void;
   onRegisterExecution: (
     exercise: WorkoutExercise,
@@ -57,6 +58,7 @@ export function WorkoutScreen({
   executionSuccess,
   latestExecutions,
   onLogout,
+  onBackToDashboard,
   onOpenEvaluationHistory,
   onRegisterExecution,
   onRetry,
@@ -206,8 +208,8 @@ export function WorkoutScreen({
             <Text style={styles.kicker}>Nexora Fit</Text>
             <Text style={styles.title}>Ola, {primeiroNome}</Text>
           </View>
-          <Pressable onPress={onLogout} style={styles.logoutButton}>
-            <Text style={styles.logoutText}>Sair</Text>
+          <Pressable onPress={onBackToDashboard} style={styles.logoutButton}>
+            <Text style={styles.logoutText}>Dashboard</Text>
           </Pressable>
         </View>
 

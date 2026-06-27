@@ -1,10 +1,11 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -15,85 +16,116 @@ import { GlassCard } from '../components/GlassCard';
 type LoginScreenProps = {
   loading: boolean;
   error?: string | null;
-  onLogin: (email: string, senha: string) => void;
+  initialIdentifier?: string;
+  rememberUser: boolean;
+  onLogin: (identifier: string, senha: string, rememberUser: boolean) => void;
+  onRememberUserChange: (rememberUser: boolean) => void;
 };
 
-export function LoginScreen({ loading, error, onLogin }: LoginScreenProps) {
-  const [email, setEmail] = useState('');
+export function LoginScreen({
+  loading,
+  error,
+  initialIdentifier,
+  rememberUser,
+  onLogin,
+  onRememberUserChange,
+}: LoginScreenProps) {
+  const [identifier, setIdentifier] = useState(initialIdentifier ?? '');
   const [senha, setSenha] = useState('');
+
+  useEffect(() => {
+    setIdentifier(initialIdentifier ?? '');
+  }, [initialIdentifier]);
 
   return (
     <LinearGradient colors={['#04060C', '#101426', '#07120E']} style={styles.root}>
       <View style={styles.glowTop} />
       <View style={styles.glowBottom} />
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboard}
       >
-        <View style={styles.header}>
-          <View style={styles.brandRow}>
-            <View style={styles.logoMark}>
-              <Text style={styles.logoText}>NF</Text>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.header}>
+            <View style={styles.brandRow}>
+              <View style={styles.logoMark}>
+                <Text style={styles.logoText}>NF</Text>
+              </View>
+              <View>
+                <Text style={styles.brand}>Nexora Fit</Text>
+                <Text style={styles.brandSub}>Aluno</Text>
+              </View>
             </View>
-            <View>
-              <Text style={styles.brand}>Nexora Fit</Text>
-              <Text style={styles.brandSub}>Aluno</Text>
+            <Text style={styles.title}>Sua evolução, todos os dias.</Text>
+            <Text style={styles.subtitle}>
+              Seu treino na palma da mao, com ficha ativa, divisoes e execucao
+              organizada para cada sessao.
+            </Text>
+          </View>
+
+          <GlassCard style={styles.card}>
+            <View style={styles.cardHeader}>
+              <Text style={styles.cardTitle}>Acessar conta</Text>
+              <Text style={styles.cardHint}>Use o login fornecido pela academia</Text>
             </View>
-          </View>
-          <Text style={styles.title}>Sua evolução, todos os dias.</Text>
-          <Text style={styles.subtitle}>
-            Seu treino na palma da mao, com ficha ativa, divisoes e execucao
-            organizada para cada sessao.
-          </Text>
-        </View>
 
-        <GlassCard style={styles.card}>
-          <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>Acessar conta</Text>
-            <Text style={styles.cardHint}>Use o login fornecido pela academia</Text>
-          </View>
+            <Text style={styles.inputLabel}>Usuário ou e-mail</Text>
+            <TextInput
+              autoCapitalize="none"
+              autoCorrect={false}
+              editable={!loading}
+              keyboardType="email-address"
+              onChangeText={setIdentifier}
+              placeholder="usuario ou email"
+              placeholderTextColor="#7F8A9A"
+              style={styles.input}
+              value={identifier}
+            />
 
-          <Text style={styles.inputLabel}>Email</Text>
-          <TextInput
-            autoCapitalize="none"
-            autoCorrect={false}
-            editable={!loading}
-            keyboardType="email-address"
-            onChangeText={setEmail}
-            placeholder="email@academia.com"
-            placeholderTextColor="#7F8A9A"
-            style={styles.input}
-            value={email}
-          />
+            <Text style={styles.inputLabel}>Senha</Text>
+            <TextInput
+              editable={!loading}
+              onChangeText={setSenha}
+              placeholder="Senha"
+              placeholderTextColor="#7F8A9A"
+              secureTextEntry
+              style={styles.input}
+              value={senha}
+            />
 
-          <Text style={styles.inputLabel}>Senha</Text>
-          <TextInput
-            editable={!loading}
-            onChangeText={setSenha}
-            placeholder="Senha"
-            placeholderTextColor="#7F8A9A"
-            secureTextEntry
-            style={styles.input}
-            value={senha}
-          />
+            <Pressable
+              disabled={loading}
+              onPress={() => onRememberUserChange(!rememberUser)}
+              style={styles.rememberRow}
+            >
+              <View style={[styles.checkbox, rememberUser ? styles.checkboxChecked : null]}>
+                {rememberUser ? <Text style={styles.checkboxText}>✓</Text> : null}
+              </View>
+              <Text style={styles.rememberText}>Lembrar usuário</Text>
+            </Pressable>
 
-          {error ? <Text style={styles.error}>{error}</Text> : null}
+            {error ? <Text style={styles.error}>{error}</Text> : null}
 
-          <Pressable
-            disabled={loading}
-            onPress={() => onLogin(email.trim(), senha)}
-            style={({ pressed }) => [
-              styles.button,
-              (pressed || loading) && styles.buttonPressed,
-            ]}
-          >
-            {loading ? (
-              <ActivityIndicator color="#07110B" />
-            ) : (
-              <Text style={styles.buttonText}>Acessar treino</Text>
-            )}
-          </Pressable>
-        </GlassCard>
+            <Pressable
+              disabled={loading}
+              onPress={() => onLogin(identifier.trim(), senha, rememberUser)}
+              style={({ pressed }) => [
+                styles.button,
+                (pressed || loading) && styles.buttonPressed,
+              ]}
+            >
+              {loading ? (
+                <ActivityIndicator color="#07110B" />
+              ) : (
+                <Text style={styles.buttonText}>Acessar treino</Text>
+              )}
+            </Pressable>
+          </GlassCard>
+        </ScrollView>
       </KeyboardAvoidingView>
     </LinearGradient>
   );
@@ -123,6 +155,9 @@ const styles = StyleSheet.create({
   },
   keyboard: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'center',
     padding: 24,
   },
@@ -217,6 +252,38 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     marginBottom: 12,
+  },
+  rememberRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 12,
+    marginTop: 2,
+    paddingVertical: 4,
+  },
+  checkbox: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(6,10,18,0.72)',
+    borderColor: 'rgba(183,255,74,0.28)',
+    borderRadius: 8,
+    borderWidth: 1,
+    height: 24,
+    justifyContent: 'center',
+    width: 24,
+  },
+  checkboxChecked: {
+    backgroundColor: '#B7FF4A',
+    borderColor: '#B7FF4A',
+  },
+  checkboxText: {
+    color: '#07110B',
+    fontSize: 14,
+    fontWeight: '900',
+  },
+  rememberText: {
+    color: '#C9D3E3',
+    fontSize: 13,
+    fontWeight: '800',
   },
   button: {
     alignItems: 'center',

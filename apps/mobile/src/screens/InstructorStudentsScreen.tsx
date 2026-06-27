@@ -101,7 +101,9 @@ export function InstructorStudentsScreen({
                   </View>
                   <View style={styles.studentTitleWrap}>
                     <Text style={styles.studentName}>{student.usuario.nome}</Text>
-                    <Text style={styles.studentEmail}>{student.usuario.email}</Text>
+                    <Text style={styles.studentEmail}>
+                      {student.usuario.email ?? 'Email não informado'}
+                    </Text>
                   </View>
                   <Badge label="Ver ficha" tone="green" />
                 </View>

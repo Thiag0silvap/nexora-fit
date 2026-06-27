@@ -489,7 +489,7 @@ export function InstructorStudentWorkoutScreen({
               <Text style={styles.kicker}>Ficha do aluno</Text>
               <Text style={styles.title}>{student.usuario.nome}</Text>
               <Text ellipsizeMode="tail" numberOfLines={1} style={styles.subtitle}>
-                {student.usuario.email}
+                {student.usuario.email ?? 'Email não informado'}
               </Text>
             </View>
           </View>

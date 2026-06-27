@@ -3,7 +3,8 @@ export type UserRole = 'ADMIN_ACADEMIA' | 'INSTRUTOR' | 'ALUNO' | 'RECEPCAO';
 export type User = {
   id: string;
   nome: string;
-  email: string;
+  username: string;
+  email: string | null;
   role: UserRole;
 };
 
@@ -90,13 +91,13 @@ export type ActiveWorkout = {
     objetivo?: string | null;
     altura?: string | number | null;
     pesoAtual?: string | number | null;
-    usuario: Pick<User, 'id' | 'nome' | 'email'>;
+    usuario: Pick<User, 'id' | 'nome' | 'username' | 'email'>;
   };
   instrutor: {
     id: string;
     cref?: string | null;
     especialidade?: string | null;
-    usuario: Pick<User, 'id' | 'nome' | 'email'>;
+    usuario: Pick<User, 'id' | 'nome' | 'username' | 'email'>;
   };
   divisoes: WorkoutDivision[];
 };
@@ -105,7 +106,7 @@ export type InstructorStudent = Pick<
   Aluno,
   'id' | 'matricula' | 'objetivo' | 'altura' | 'pesoAtual'
 > & {
-  usuario: Pick<User, 'id' | 'nome' | 'email'>;
+  usuario: Pick<User, 'id' | 'nome' | 'username' | 'email'>;
 };
 
 export type WorkoutSummary = {
@@ -116,12 +117,12 @@ export type WorkoutSummary = {
   aluno: {
     id: string;
     matricula: string;
-    usuario: Pick<User, 'id' | 'nome' | 'email'>;
+    usuario: Pick<User, 'id' | 'nome' | 'username' | 'email'>;
   };
   instrutor: {
     id: string;
     cref?: string | null;
-    usuario: Pick<User, 'id' | 'nome' | 'email'>;
+    usuario: Pick<User, 'id' | 'nome' | 'username' | 'email'>;
   };
 };
 
@@ -156,7 +157,7 @@ export type PhysicalEvaluation = {
   aluno?: {
     id: string;
     matricula: string;
-    usuario: Pick<User, 'id' | 'nome' | 'email'>;
+    usuario: Pick<User, 'id' | 'nome' | 'username' | 'email'>;
   };
 };
 

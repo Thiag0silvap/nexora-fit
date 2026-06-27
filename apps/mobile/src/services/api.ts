@@ -32,7 +32,29 @@ type RequestOptions = {
   body?: unknown;
 };
 
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+let unauthorizedHandler: (() => void) | null = null;
+let tokenRefreshHandler: (() => Promise<string | null>) | null = null;
+
+export class UnauthorizedError extends Error {
+  constructor() {
+    super('Sua sessão expirou. Faça login novamente.');
+    this.name = 'UnauthorizedError';
+  }
+}
+
+export function setUnauthorizedHandler(handler: (() => void) | null) {
+  unauthorizedHandler = handler;
+}
+
+export function setTokenRefreshHandler(handler: (() => Promise<string | null>) | null) {
+  tokenRefreshHandler = handler;
+}
+
+async function request<T>(
+  path: string,
+  options: RequestOptions = {},
+  retryOnUnauthorized = true,
+): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method: options.method ?? 'GET',
     headers: {
@@ -45,6 +67,19 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   const text = await response.text();
   const data = text ? JSON.parse(text) : null;
 
+  if (response.status === 401) {
+    if (retryOnUnauthorized && options.token && tokenRefreshHandler) {
+      const refreshedToken = await tokenRefreshHandler();
+
+      if (refreshedToken) {
+        return request<T>(path, { ...options, token: refreshedToken }, false);
+      }
+    }
+
+    unauthorizedHandler?.();
+    throw new UnauthorizedError();
+  }
+
   if (!response.ok) {
     throw new Error(data?.message ?? 'Nao foi possivel conectar ao Nexora Fit.');
   }
@@ -52,11 +87,22 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   return data as T;
 }
 
-export function login(email: string, senha: string) {
+export function login(identificador: string, senha: string) {
   return request<LoginResponse>('/auth/login', {
     method: 'POST',
-    body: { email, senha },
+    body: { identificador, email: identificador, senha },
   });
+}
+
+export function refreshTokens(refreshToken: string) {
+  return request<LoginResponse>(
+    '/auth/refresh',
+    {
+      method: 'POST',
+      body: { refreshToken },
+    },
+    false,
+  );
 }
 
 export function getMyProfile(token: string) {
@@ -65,6 +111,10 @@ export function getMyProfile(token: string) {
 
 export function getMyWorkout(token: string) {
   return request<ActiveWorkout>('/mobile/meu-treino', { token });
+}
+
+export function getAuthMe(token: string) {
+  return request<LoginResponse['user']>('/auth/me', { token });
 }
 
 export function createExecucao(token: string, payload: CreateExecutionPayload) {
@@ -87,6 +137,10 @@ export function getLatestExecutionByWorkoutExercise(
 
 export function getExecucoesHoje(token: string) {
   return request<TodayExecution[]>('/execucoes/hoje', { token });
+}
+
+export function getExecucoesMe(token: string) {
+  return request<ExecutionRecord[]>('/execucoes/me', { token });
 }
 
 export function getExercicios(token: string) {

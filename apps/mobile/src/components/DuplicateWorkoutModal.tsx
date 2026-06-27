@@ -64,7 +64,8 @@ export function DuplicateWorkoutModal({
   return (
     <Modal animationType="fade" transparent visible={visible} onRequestClose={onCancel}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 24 : 0}
         style={styles.overlay}
       >
         <Pressable style={styles.backdrop} onPress={saving ? undefined : onCancel} />
@@ -152,7 +153,7 @@ const styles = StyleSheet.create({
   },
   panelContent: {
     padding: 20,
-    paddingBottom: 34,
+    paddingBottom: 72,
   },
   handle: {
     alignSelf: 'center',
