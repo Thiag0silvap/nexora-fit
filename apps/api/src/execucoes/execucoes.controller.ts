@@ -32,6 +32,11 @@ export class ExecucoesController {
     return this.execucoesService.findToday(user);
   }
 
+  @Get('exercicio/:id/evolucao')
+  findExerciseEvolution(@CurrentUser() user: AuthUser, @Param('id') id: string) {
+    return this.execucoesService.findExerciseEvolution(user, id);
+  }
+
   @Get('exercicio/:id')
   findMineByExercise(@CurrentUser() user: AuthUser, @Param('id') id: string) {
     return this.execucoesService.findMineByExercise(user, id);

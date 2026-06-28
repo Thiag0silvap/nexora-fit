@@ -522,8 +522,15 @@ function HistoryCard({ latestExecution }: { latestExecution: LatestExecution }) 
   return (
     <View style={styles.historyCard}>
       <View style={styles.historyItem}>
-        <Text style={styles.historyLabel}>Ultima carga</Text>
+        <Text style={styles.historyLabel}>Ultima carga global</Text>
         <Text style={styles.historyValue}>{formatLoad(latestExecution.ultimaCarga)}</Text>
+      </View>
+      <View style={styles.historyDivider} />
+      <View style={styles.historyItem}>
+        <Text style={styles.historyLabel}>Melhor carga</Text>
+        <Text style={styles.historyValue}>
+          {formatLoad(latestExecution.melhorCarga ?? latestExecution.ultimaCarga)}
+        </Text>
       </View>
       <View style={styles.historyDivider} />
       <View style={styles.historyItem}>

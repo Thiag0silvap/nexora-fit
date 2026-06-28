@@ -12,9 +12,9 @@ import { StudentDashboardScreen } from './src/screens/StudentDashboardScreen';
 import { WorkoutScreen } from './src/screens/WorkoutScreen';
 import {
   createExecucao,
+  getExerciseEvolution,
   getAuthMe,
   getExecucoesHoje,
-  getLatestExecutionByWorkoutExercise,
   getMyProfile,
   getMyWorkout,
   login,
@@ -218,9 +218,9 @@ export default function App() {
     const entries = await Promise.all(
       exercises.map(async (exercise) => {
         try {
-          const latestExecution = await getLatestExecutionByWorkoutExercise(
+          const latestExecution = await getExerciseEvolution(
             token,
-            exercise.id,
+            exercise.exercicio.id,
           );
 
           return [exercise.id, latestExecution] as const;
@@ -356,6 +356,19 @@ export default function App() {
       exercicioDivisaoId: exercise.id,
       ...values,
     });
+    let updatedEvolution = null;
+
+    try {
+      updatedEvolution = await getExerciseEvolution(accessToken, exercise.exercicio.id);
+    } catch {
+      updatedEvolution = null;
+    }
+    const sameExerciseIds =
+      workout?.divisoes.flatMap((division) =>
+        division.exerciciosDivisao
+          .filter((item) => item.exercicio.id === exercise.exercicio.id)
+          .map((item) => item.id),
+      ) ?? [exercise.id];
 
     setCompletedExercises((current) => ({
       ...current,
@@ -363,12 +376,17 @@ export default function App() {
     }));
     setLatestExecutions((current) => ({
       ...current,
-      [exercise.id]: {
-        ultimaCarga: execucao.carga,
-        ultimaRepeticao: execucao.repeticoesRealizadas,
-        ultimaExecucao: execucao.executadoEm,
-        observacao: execucao.observacao,
-      },
+      ...Object.fromEntries(
+        sameExerciseIds.map((exerciseId) => [
+          exerciseId,
+          updatedEvolution ?? {
+            ultimaCarga: execucao.carga,
+            ultimaRepeticao: execucao.repeticoesRealizadas,
+            ultimaExecucao: execucao.executadoEm,
+            observacao: execucao.observacao,
+          },
+        ]),
+      ),
     }));
     setExecutionSuccess(`${exercise.exercicio.nome} registrado com sucesso.`);
   }

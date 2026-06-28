@@ -264,9 +264,13 @@ export type TodayExecution = Pick<
 
 export type LatestExecution = {
   ultimaCarga: string | number;
-  ultimaRepeticao: number;
+  melhorCarga?: string | number;
+  ultimaRepeticao?: number | null;
+  melhorRepeticao?: number | null;
   ultimaExecucao: string;
+  melhorCargaExecutadaEm?: string;
   observacao?: string | null;
+  quantidadeExecucoes?: number;
 } | null;
 
 export type LatestExecutionsByWorkoutExercise = Record<string, LatestExecution>;

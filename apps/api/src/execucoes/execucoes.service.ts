@@ -32,20 +32,33 @@ export class ExecucoesService {
 
   async create(user: AuthUser, createExecucaoDto: CreateExecucaoDto) {
     const aluno = await this.findAlunoByUser(user);
-    await this.ensureExercicioDivisaoBelongsToActiveWorkout(
+    const exercicioDivisao = await this.ensureExercicioDivisaoBelongsToActiveWorkout(
       aluno.id,
       createExecucaoDto.exercicioDivisaoId,
     );
 
-    return this.prisma.execucaoTreino.create({
-      data: {
+    return this.prisma.$transaction(async (tx) => {
+      const execucao = await tx.execucaoTreino.create({
+        data: {
+          alunoId: aluno.id,
+          exercicioDivisaoId: createExecucaoDto.exercicioDivisaoId,
+          carga: createExecucaoDto.carga,
+          repeticoesRealizadas: createExecucaoDto.repeticoesRealizadas,
+          observacao: createExecucaoDto.observacao,
+        },
+        include: execucaoInclude,
+      });
+
+      await this.updateAlunoExercicioEvolucao(tx, {
         alunoId: aluno.id,
-        exercicioDivisaoId: createExecucaoDto.exercicioDivisaoId,
-        carga: createExecucaoDto.carga,
-        repeticoesRealizadas: createExecucaoDto.repeticoesRealizadas,
-        observacao: createExecucaoDto.observacao,
-      },
-      include: execucaoInclude,
+        exercicioId: exercicioDivisao.exercicioId,
+        carga: execucao.carga,
+        repeticoesRealizadas: execucao.repeticoesRealizadas,
+        observacao: execucao.observacao,
+        executadoEm: execucao.executadoEm,
+      });
+
+      return execucao;
     });
   }
 
@@ -117,39 +130,47 @@ export class ExecucoesService {
     });
   }
 
+  async findExerciseEvolution(user: AuthUser, exercicioId: string) {
+    const aluno = await this.findAlunoByUser(user);
+    await this.ensureExercicioAtivo(exercicioId);
+
+    const evolucao = await this.prisma.alunoExercicioEvolucao.findUnique({
+      where: {
+        alunoId_exercicioId: {
+          alunoId: aluno.id,
+          exercicioId,
+        },
+      },
+    });
+
+    if (!evolucao) {
+      return null;
+    }
+
+    return this.mapEvolucao(evolucao);
+  }
+
   async findLatestByWorkoutExercise(user: AuthUser, exercicioDivisaoId: string) {
     const aluno = await this.findAlunoByUser(user);
-    await this.ensureExercicioDivisaoBelongsToActiveWorkout(
+    const exercicioDivisao = await this.ensureExercicioDivisaoBelongsToActiveWorkout(
       aluno.id,
       exercicioDivisaoId,
     );
 
-    const ultimaExecucao = await this.prisma.execucaoTreino.findFirst({
+    const evolucao = await this.prisma.alunoExercicioEvolucao.findUnique({
       where: {
-        alunoId: aluno.id,
-        exercicioDivisaoId,
-      },
-      orderBy: {
-        executadoEm: 'desc',
-      },
-      select: {
-        carga: true,
-        repeticoesRealizadas: true,
-        executadoEm: true,
-        observacao: true,
+        alunoId_exercicioId: {
+          alunoId: aluno.id,
+          exercicioId: exercicioDivisao.exercicioId,
+        },
       },
     });
 
-    if (!ultimaExecucao) {
+    if (!evolucao) {
       return null;
     }
 
-    return {
-      ultimaCarga: Number(ultimaExecucao.carga),
-      ultimaRepeticao: ultimaExecucao.repeticoesRealizadas,
-      ultimaExecucao: ultimaExecucao.executadoEm.toISOString(),
-      observacao: ultimaExecucao.observacao,
-    };
+    return this.mapEvolucao(evolucao);
   }
 
   private async findAlunoByUser(user: AuthUser) {
@@ -193,6 +214,7 @@ export class ExecucoesService {
       },
       select: {
         id: true,
+        exercicioId: true,
       },
     });
 
@@ -201,6 +223,8 @@ export class ExecucoesService {
         'Exercicio da divisao nao encontrado para a ficha ativa do aluno.',
       );
     }
+
+    return exercicioDivisao;
   }
 
   private async ensureExercicioAtivo(exercicioId: string) {
@@ -217,5 +241,84 @@ export class ExecucoesService {
     if (!exercicio) {
       throw new NotFoundException('Exercicio nao encontrado ou inativo.');
     }
+  }
+
+  private async updateAlunoExercicioEvolucao(
+    tx: Prisma.TransactionClient,
+    data: {
+      alunoId: string;
+      exercicioId: string;
+      carga: Prisma.Decimal;
+      repeticoesRealizadas: number;
+      observacao?: string | null;
+      executadoEm: Date;
+    },
+  ) {
+    const evolucaoAtual = await tx.alunoExercicioEvolucao.findUnique({
+      where: {
+        alunoId_exercicioId: {
+          alunoId: data.alunoId,
+          exercicioId: data.exercicioId,
+        },
+      },
+    });
+
+    if (!evolucaoAtual) {
+      await tx.alunoExercicioEvolucao.create({
+        data: {
+          alunoId: data.alunoId,
+          exercicioId: data.exercicioId,
+          ultimaCarga: data.carga,
+          melhorCarga: data.carga,
+          ultimaRepeticao: data.repeticoesRealizadas,
+          melhorRepeticao: data.repeticoesRealizadas,
+          ultimaExecucao: data.executadoEm,
+          melhorCargaExecutadaEm: data.executadoEm,
+          observacaoUltima: data.observacao,
+          quantidadeExecucoes: 1,
+        },
+      });
+      return;
+    }
+
+    const novaCargaEhMelhor =
+      Number(data.carga) >= Number(evolucaoAtual.melhorCarga);
+
+    await tx.alunoExercicioEvolucao.update({
+      where: {
+        id: evolucaoAtual.id,
+      },
+      data: {
+        ultimaCarga: data.carga,
+        ultimaRepeticao: data.repeticoesRealizadas,
+        ultimaExecucao: data.executadoEm,
+        observacaoUltima: data.observacao,
+        quantidadeExecucoes: {
+          increment: 1,
+        },
+        melhorCarga: novaCargaEhMelhor ? data.carga : undefined,
+        melhorRepeticao: novaCargaEhMelhor
+          ? data.repeticoesRealizadas
+          : undefined,
+        melhorCargaExecutadaEm: novaCargaEhMelhor
+          ? data.executadoEm
+          : undefined,
+      },
+    });
+  }
+
+  private mapEvolucao(
+    evolucao: Prisma.AlunoExercicioEvolucaoGetPayload<Record<string, never>>,
+  ) {
+    return {
+      ultimaCarga: Number(evolucao.ultimaCarga),
+      melhorCarga: Number(evolucao.melhorCarga),
+      ultimaRepeticao: evolucao.ultimaRepeticao,
+      melhorRepeticao: evolucao.melhorRepeticao,
+      ultimaExecucao: evolucao.ultimaExecucao.toISOString(),
+      melhorCargaExecutadaEm: evolucao.melhorCargaExecutadaEm.toISOString(),
+      observacao: evolucao.observacaoUltima,
+      quantidadeExecucoes: evolucao.quantidadeExecucoes,
+    };
   }
 }

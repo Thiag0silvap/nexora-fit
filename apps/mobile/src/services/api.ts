@@ -125,6 +125,13 @@ export function createExecucao(token: string, payload: CreateExecutionPayload) {
   });
 }
 
+export function getExerciseEvolution(token: string, exercicioId: string) {
+  return request<LatestExecution>(
+    `/execucoes/exercicio/${exercicioId}/evolucao`,
+    { token },
+  );
+}
+
 export function getLatestExecutionByWorkoutExercise(
   token: string,
   exercicioDivisaoId: string,

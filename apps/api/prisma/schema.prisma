@@ -75,21 +75,22 @@ model Usuario {
 }
 
 model Aluno {
-  id              String            @id @default(uuid()) @db.Uuid
-  usuarioId       String            @unique @db.Uuid
-  matricula       String            @unique
-  dataNascimento  DateTime?
-  sexo            Sexo?
-  altura          Decimal?          @db.Decimal(5, 2)
-  pesoAtual       Decimal?          @db.Decimal(5, 2)
-  objetivo        ObjetivoTreino?
-  ativo           Boolean           @default(true)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  usuario         Usuario           @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-  fichasTreino    FichaTreino[]
-  avaliacoes      AvaliacaoFisica[]
-  execucoesTreino ExecucaoTreino[]
+  id                 String                   @id @default(uuid()) @db.Uuid
+  usuarioId          String                   @unique @db.Uuid
+  matricula          String                   @unique
+  dataNascimento     DateTime?
+  sexo               Sexo?
+  altura             Decimal?                 @db.Decimal(5, 2)
+  pesoAtual          Decimal?                 @db.Decimal(5, 2)
+  objetivo           ObjetivoTreino?
+  ativo              Boolean                  @default(true)
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  usuario            Usuario                  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  fichasTreino       FichaTreino[]
+  avaliacoes         AvaliacaoFisica[]
+  execucoesTreino    ExecucaoTreino[]
+  exerciciosEvolucao AlunoExercicioEvolucao[]
 }
 
 model Instrutor {
@@ -105,17 +106,41 @@ model Instrutor {
 }
 
 model Exercicio {
-  id                String             @id @default(uuid()) @db.Uuid
-  nome              String             @unique
+  id                String                   @id @default(uuid()) @db.Uuid
+  nome              String                   @unique
   grupoMuscular     GrupoMuscular
   descricao         String?
   videoUrl          String?
-  ativo             Boolean            @default(true)
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
+  ativo             Boolean                  @default(true)
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
   exerciciosDivisao ExercicioDivisao[]
+  alunosEvolucao    AlunoExercicioEvolucao[]
 
   @@index([grupoMuscular])
+}
+
+model AlunoExercicioEvolucao {
+  id                     String    @id @default(uuid()) @db.Uuid
+  alunoId                String    @db.Uuid
+  exercicioId            String    @db.Uuid
+  ultimaCarga            Decimal   @db.Decimal(7, 2)
+  melhorCarga            Decimal   @db.Decimal(7, 2)
+  ultimaRepeticao        Int?
+  melhorRepeticao        Int?
+  ultimaExecucao         DateTime
+  melhorCargaExecutadaEm DateTime
+  observacaoUltima       String?
+  quantidadeExecucoes    Int       @default(0)
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  aluno                  Aluno     @relation(fields: [alunoId], references: [id], onDelete: Cascade)
+  exercicio              Exercicio @relation(fields: [exercicioId], references: [id], onDelete: Restrict)
+
+  @@unique([alunoId, exercicioId])
+  @@index([alunoId])
+  @@index([exercicioId])
+  @@index([ultimaExecucao])
 }
 
 model FichaTreino {
