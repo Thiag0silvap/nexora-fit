@@ -9,6 +9,7 @@ import { InstructorStudentsScreen } from './src/screens/InstructorStudentsScreen
 import { InstructorStudentWorkoutScreen } from './src/screens/InstructorStudentWorkoutScreen';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { StudentDashboardScreen } from './src/screens/StudentDashboardScreen';
+import { StudentEvolutionScreen } from './src/screens/StudentEvolutionScreen';
 import { WorkoutScreen } from './src/screens/WorkoutScreen';
 import {
   createExecucao,
@@ -56,7 +57,7 @@ export default function App() {
   const [latestExecutions, setLatestExecutions] =
     useState<LatestExecutionsByWorkoutExercise>({});
   const [studentScreen, setStudentScreen] =
-    useState<'dashboard' | 'workout' | 'evaluations'>('dashboard');
+    useState<'dashboard' | 'workout' | 'evaluations' | 'evolution'>('dashboard');
   const [evaluationBackScreen, setEvaluationBackScreen] =
     useState<'dashboard' | 'workout'>('dashboard');
   const inactivityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -415,6 +416,12 @@ export default function App() {
             onLogout={handleLogout}
             token={accessToken}
           />
+        ) : studentScreen === 'evolution' ? (
+          <StudentEvolutionScreen
+            onBack={() => setStudentScreen('dashboard')}
+            onLogout={handleLogout}
+            token={accessToken}
+          />
         ) : studentScreen === 'workout' ? (
           <WorkoutScreen
             error={screenError}
@@ -437,11 +444,11 @@ export default function App() {
             error={screenError}
             loading={screenLoading}
             onLogout={handleLogout}
+            onOpenEvolution={() => setStudentScreen('evolution')}
             onOpenEvaluationHistory={() => openEvaluationHistory('dashboard')}
             onOpenWorkout={() => setStudentScreen('workout')}
             onRefreshStudentData={() => loadStudentData(accessToken)}
             profile={profile}
-            token={accessToken}
             workout={workout}
           />
         )
