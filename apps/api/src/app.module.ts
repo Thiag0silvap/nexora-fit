@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { AvaliacoesFisicasModule } from './avaliacoes-fisicas/avaliacoes-fisicas.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 import { ExerciciosModule } from './exercicios/exercicios.module';
 import { ExecucoesModule } from './execucoes/execucoes.module';
 import { FichasTreinoModule } from './fichas-treino/fichas-treino.module';
@@ -18,6 +19,7 @@ import { UsuariosModule } from './usuarios/usuarios.module';
     PrismaModule,
     AuthModule,
     AvaliacoesFisicasModule,
+    DashboardModule,
     AcademiasModule,
     AlunosModule,
     InstrutoresModule,

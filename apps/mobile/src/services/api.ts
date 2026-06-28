@@ -7,6 +7,7 @@ import {
   CreateWorkoutDivisionPayload,
   CreateWorkoutPayload,
   CreatedWorkoutDivision,
+  DashboardEvolution,
   DuplicateWorkoutPayload,
   ExecutionRecord,
   Exercise,
@@ -111,6 +112,10 @@ export function getMyProfile(token: string) {
 
 export function getMyWorkout(token: string) {
   return request<ActiveWorkout>('/mobile/meu-treino', { token });
+}
+
+export function getDashboardEvolucao(token: string) {
+  return request<DashboardEvolution>('/dashboard/evolucao', { token });
 }
 
 export function getAuthMe(token: string) {

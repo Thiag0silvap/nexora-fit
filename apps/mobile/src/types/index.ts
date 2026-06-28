@@ -274,3 +274,72 @@ export type LatestExecution = {
 } | null;
 
 export type LatestExecutionsByWorkoutExercise = Record<string, LatestExecution>;
+
+export type DashboardChartPoint = {
+  label: string;
+  date: string;
+  value: number;
+};
+
+export type DashboardMeasureKey =
+  | 'bracoDireito'
+  | 'peitoral'
+  | 'cintura'
+  | 'abdomen'
+  | 'quadril'
+  | 'coxaDireita'
+  | 'panturrilhaDireita';
+
+export type DashboardEvolution = {
+  resumoPeso: {
+    pesoAtual: number | null;
+    pesoInicial: number | null;
+    diferenca: number | null;
+    percentual: number | null;
+  };
+  resumoCorporal: {
+    imc: number | null;
+    percentualGordura: number | null;
+    massaMagra: number | null;
+    circunferenciaAbdominal: number | null;
+  };
+  graficos: {
+    peso: DashboardChartPoint[];
+    medidas: Record<
+      DashboardMeasureKey,
+      {
+        label: string;
+        points: DashboardChartPoint[];
+      }
+    >;
+    cargas: Array<{
+      exercicioId: string;
+      nome: string;
+      grupoMuscular: string;
+      points: DashboardChartPoint[];
+    }>;
+  };
+  recordes: {
+    maiorCarga: { exercicio: string; carga: number; data: string } | null;
+    maiorEvolucao: { exercicio: string; diferenca: number } | null;
+    exercicioFavorito: { exercicio: string; quantidade: number } | null;
+    exercicioMaisExecutado: { exercicio: string; quantidade: number } | null;
+  };
+  treinos: {
+    esteMes: number;
+    esteAno: number;
+    diasConsecutivos: number;
+    maiorSequencia: number;
+  };
+  consistencia: {
+    nivel: 'Excelente' | 'Muito boa' | 'Boa' | 'Baixa';
+    score: number;
+  };
+  insights: string[];
+  metadata: {
+    geradoEm: string;
+    totalAvaliacoes: number;
+    totalExecucoes: number;
+    totalExercicios: number;
+  };
+};
