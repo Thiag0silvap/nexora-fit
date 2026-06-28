@@ -1,4 +1,5 @@
-import { StyleSheet, View, ViewStyle } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, StyleSheet, View, ViewStyle } from 'react-native';
 
 type ProgressBarProps = {
   progress: number;
@@ -8,15 +9,29 @@ type ProgressBarProps = {
 
 export function ProgressBar({ progress, height = 10, style }: ProgressBarProps) {
   const normalizedProgress = Math.min(Math.max(progress, 0), 100);
+  const animatedProgress = useRef(new Animated.Value(normalizedProgress)).current;
+
+  useEffect(() => {
+    Animated.timing(animatedProgress, {
+      duration: 360,
+      toValue: normalizedProgress,
+      useNativeDriver: false,
+    }).start();
+  }, [animatedProgress, normalizedProgress]);
+
+  const width = animatedProgress.interpolate({
+    inputRange: [0, 100],
+    outputRange: ['0%', '100%'],
+  });
 
   return (
     <View style={[styles.track, { height, borderRadius: height }, style]}>
-      <View
+      <Animated.View
         style={[
           styles.fill,
           {
             borderRadius: height,
-            width: `${normalizedProgress}%`,
+            width,
           },
         ]}
       />

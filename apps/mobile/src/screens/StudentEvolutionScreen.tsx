@@ -8,6 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { AnimatedEntrance } from '../components/AnimatedEntrance';
 import { DashboardMetricCard } from '../components/DashboardMetricCard';
 import { DashboardSkeleton } from '../components/DashboardSkeleton';
 import { EvolutionLineChart } from '../components/EvolutionLineChart';
@@ -15,6 +16,7 @@ import { GlassCard } from '../components/GlassCard';
 import { ProgressBar } from '../components/ProgressBar';
 import { getDashboardEvolucao } from '../services/api';
 import { DashboardEvolution, DashboardMeasureKey } from '../types';
+import { lightImpactHaptic, selectionHaptic } from '../utils/haptics';
 
 type StudentEvolutionScreenProps = {
   token: string;
@@ -90,6 +92,16 @@ export function StudentEvolutionScreen({
     setRefreshing(false);
   }
 
+  function handleBack() {
+    selectionHaptic();
+    onBack();
+  }
+
+  function handleLogout() {
+    selectionHaptic();
+    onLogout();
+  }
+
   return (
     <LinearGradient colors={['#04060C', '#0C1322', '#101528']} style={styles.root}>
       <View style={styles.glowTop} />
@@ -108,20 +120,22 @@ export function StudentEvolutionScreen({
         }
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.topBar}>
-          <Pressable onPress={onBack} style={styles.secondaryButton}>
+        <AnimatedEntrance style={styles.topBar}>
+          <Pressable onPress={handleBack} style={styles.secondaryButton}>
             <Text style={styles.secondaryButtonText}>Voltar</Text>
           </Pressable>
-          <Pressable onPress={onLogout} style={styles.secondaryButton}>
+          <Pressable onPress={handleLogout} style={styles.secondaryButton}>
             <Text style={styles.secondaryButtonText}>Sair</Text>
           </Pressable>
-        </View>
+        </AnimatedEntrance>
 
-        <Text style={styles.kicker}>Minha Evolução</Text>
-        <Text style={styles.title}>Seu progresso completo</Text>
-        <Text style={styles.subtitle}>
-          Peso, medidas, cargas, recordes e consistência em um só lugar.
-        </Text>
+        <AnimatedEntrance delay={60}>
+          <Text style={styles.kicker}>Minha Evolução</Text>
+          <Text style={styles.title}>Seu progresso completo</Text>
+          <Text style={styles.subtitle}>
+            Peso, medidas, cargas, recordes e consistência em um só lugar.
+          </Text>
+        </AnimatedEntrance>
 
         {loading ? <DashboardSkeleton /> : null}
 
@@ -137,7 +151,8 @@ export function StudentEvolutionScreen({
 
         {!loading && !error && dashboard ? (
           <>
-            <GlassCard style={styles.heroCard}>
+            <AnimatedEntrance delay={110}>
+              <GlassCard style={styles.heroCard}>
               <View style={styles.heroHeader}>
                 <View style={styles.heroCopy}>
                   <Text style={styles.heroLabel}>Peso atual</Text>
@@ -155,9 +170,10 @@ export function StudentEvolutionScreen({
                   </Text>
                 </View>
               </View>
-            </GlassCard>
+              </GlassCard>
+            </AnimatedEntrance>
 
-            <View style={styles.metricsGrid}>
+            <AnimatedEntrance delay={160} style={styles.metricsGrid}>
               <DashboardMetricCard
                 detail="Primeira avaliação"
                 label="Peso inicial"
@@ -170,9 +186,9 @@ export function StudentEvolutionScreen({
                 tone="green"
                 value={formatWeightDelta(dashboard.resumoPeso.diferenca)}
               />
-            </View>
+            </AnimatedEntrance>
 
-            <View style={styles.metricsGrid}>
+            <AnimatedEntrance delay={200} style={styles.metricsGrid}>
               <DashboardMetricCard
                 label="IMC"
                 value={formatNumber(dashboard.resumoCorporal.imc) ?? 'Sem dados'}
@@ -182,9 +198,9 @@ export function StudentEvolutionScreen({
                 tone="purple"
                 value={formatPercent(dashboard.resumoCorporal.percentualGordura)}
               />
-            </View>
+            </AnimatedEntrance>
 
-            <View style={styles.metricsGrid}>
+            <AnimatedEntrance delay={240} style={styles.metricsGrid}>
               <DashboardMetricCard
                 label="Massa magra"
                 tone="green"
@@ -196,20 +212,26 @@ export function StudentEvolutionScreen({
                   dashboard.resumoCorporal.circunferenciaAbdominal,
                 )}
               />
-            </View>
+            </AnimatedEntrance>
 
-            <GlassCard style={styles.card}>
+            <AnimatedEntrance delay={280}>
+              <GlassCard style={styles.card}>
               <SectionTitle title="Gráfico de peso" subtitle="Primeira avaliação até hoje" />
               <EvolutionLineChart points={dashboard.graficos.peso} unit="kg" />
-            </GlassCard>
+              </GlassCard>
+            </AnimatedEntrance>
 
-            <GlassCard style={styles.card}>
+            <AnimatedEntrance delay={320}>
+              <GlassCard style={styles.card}>
               <SectionTitle title="Medidas corporais" subtitle="Escolha uma medida" />
               <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabs}>
                 {measureOptions.map((option) => (
                   <Pressable
                     key={option.key}
-                    onPress={() => setSelectedMeasure(option.key)}
+                    onPress={() => {
+                      selectionHaptic();
+                      setSelectedMeasure(option.key);
+                    }}
                     style={[
                       styles.tab,
                       selectedMeasure === option.key ? styles.tabActive : null,
@@ -231,15 +253,20 @@ export function StudentEvolutionScreen({
                 points={selectedMeasureData?.points ?? []}
                 unit="cm"
               />
-            </GlassCard>
+              </GlassCard>
+            </AnimatedEntrance>
 
-            <GlassCard style={styles.card}>
+            <AnimatedEntrance delay={360}>
+              <GlassCard style={styles.card}>
               <SectionTitle title="Evolução de carga" subtitle="Histórico global por exercício" />
               <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabs}>
                 {dashboard.graficos.cargas.map((exercise) => (
                   <Pressable
                     key={exercise.exercicioId}
-                    onPress={() => setSelectedExerciseId(exercise.exercicioId)}
+                    onPress={() => {
+                      lightImpactHaptic();
+                      setSelectedExerciseId(exercise.exercicioId);
+                    }}
                     style={[
                       styles.tab,
                       selectedExercise?.exercicioId === exercise.exercicioId
@@ -265,9 +292,11 @@ export function StudentEvolutionScreen({
                 points={selectedExercise?.points ?? []}
                 unit="kg"
               />
-            </GlassCard>
+              </GlassCard>
+            </AnimatedEntrance>
 
-            <GlassCard style={styles.card}>
+            <AnimatedEntrance delay={400}>
+              <GlassCard style={styles.card}>
               <SectionTitle title="Meus Recordes" subtitle="Marcas que contam sua evolução" />
               <RecordRow
                 label="Maior carga"
@@ -285,9 +314,11 @@ export function StudentEvolutionScreen({
                 label="Mais executado"
                 value={formatRecordCount(dashboard.recordes.exercicioMaisExecutado)}
               />
-            </GlassCard>
+              </GlassCard>
+            </AnimatedEntrance>
 
-            <GlassCard style={styles.card}>
+            <AnimatedEntrance delay={440}>
+              <GlassCard style={styles.card}>
               <SectionTitle title="Treinos" subtitle="Frequência e consistência" />
               <View style={styles.trainingGrid}>
                 <TrainingItem label="Este mês" value={dashboard.treinos.esteMes} />
@@ -307,9 +338,11 @@ export function StudentEvolutionScreen({
                 progress={dashboard.consistencia.score}
                 style={styles.progressBar}
               />
-            </GlassCard>
+              </GlassCard>
+            </AnimatedEntrance>
 
-            <GlassCard style={styles.card}>
+            <AnimatedEntrance delay={480}>
+              <GlassCard style={styles.card}>
               <SectionTitle title="Insights" subtitle="Leitura simples, sem IA ainda" />
               <View style={styles.insightList}>
                 {dashboard.insights.map((insight) => (
@@ -319,7 +352,8 @@ export function StudentEvolutionScreen({
                   </View>
                 ))}
               </View>
-            </GlassCard>
+              </GlassCard>
+            </AnimatedEntrance>
           </>
         ) : null}
       </ScrollView>

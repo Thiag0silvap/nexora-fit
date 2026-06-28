@@ -8,9 +8,11 @@ import {
   Text,
   View,
 } from 'react-native';
+import { AnimatedEntrance } from '../components/AnimatedEntrance';
 import { GlassCard } from '../components/GlassCard';
 import { ProgressBar } from '../components/ProgressBar';
 import { ActiveWorkout, StudentProfile } from '../types';
+import { lightImpactHaptic, selectionHaptic } from '../utils/haptics';
 
 type StudentDashboardScreenProps = {
   profile: StudentProfile | null;
@@ -60,12 +62,28 @@ export function StudentDashboardScreen({
   });
 
   async function handleRefresh() {
+    selectionHaptic();
     setRefreshing(true);
     try {
       await onRefreshStudentData();
     } finally {
       setRefreshing(false);
     }
+  }
+
+  function handleOpenWorkout() {
+    lightImpactHaptic();
+    onOpenWorkout();
+  }
+
+  function handleOpenEvolution() {
+    lightImpactHaptic();
+    onOpenEvolution();
+  }
+
+  function handleOpenEvaluationHistory() {
+    selectionHaptic();
+    onOpenEvaluationHistory();
   }
 
   return (
@@ -86,7 +104,7 @@ export function StudentDashboardScreen({
         }
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.topBar}>
+        <AnimatedEntrance style={styles.topBar}>
           <View style={styles.headerCopy}>
             <Text style={styles.kicker}>Nexora Fit</Text>
             <Text style={styles.title}>Olá, {primeiroNome} 👋</Text>
@@ -95,9 +113,10 @@ export function StudentDashboardScreen({
           <Pressable onPress={onLogout} style={styles.logoutButton}>
             <Text style={styles.logoutText}>Sair</Text>
           </Pressable>
-        </View>
+        </AnimatedEntrance>
 
-        <GlassCard style={styles.heroCard}>
+        <AnimatedEntrance delay={60}>
+          <GlassCard style={styles.heroCard}>
           <View style={styles.heroHeader}>
             <View style={styles.heroCopy}>
               <Text style={styles.heroLabel}>Treino de hoje</Text>
@@ -117,7 +136,7 @@ export function StudentDashboardScreen({
           <ProgressBar height={10} progress={progressPercent} style={styles.progressBar} />
           <Pressable
             disabled={!workout}
-            onPress={onOpenWorkout}
+            onPress={handleOpenWorkout}
             style={({ pressed }) => [
               styles.primaryButton,
               !workout ? styles.primaryButtonDisabled : null,
@@ -128,14 +147,15 @@ export function StudentDashboardScreen({
               {completedTodayCount > 0 ? 'Continuar treino' : 'Começar treino'}
             </Text>
           </Pressable>
-        </GlassCard>
+          </GlassCard>
+        </AnimatedEntrance>
 
-        <View style={styles.sectionHeader}>
+        <AnimatedEntrance delay={110} style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Seu progresso</Text>
           <Text style={styles.sectionHint}>O essencial, sem poluição.</Text>
-        </View>
+        </AnimatedEntrance>
 
-        <View style={styles.progressMiniGrid}>
+        <AnimatedEntrance delay={140} style={styles.progressMiniGrid}>
           <MiniStat
             label="Hoje"
             value={`${completedTodayCount}/${totalTodayExercises || 0}`}
@@ -148,9 +168,10 @@ export function StudentDashboardScreen({
             label="Objetivo"
             value={formatObjective(profile?.aluno.objetivo)}
           />
-        </View>
+        </AnimatedEntrance>
 
-        <GlassCard style={styles.compactCard}>
+        <AnimatedEntrance delay={190}>
+          <GlassCard style={styles.compactCard}>
           <View style={styles.cardTitleRow}>
             <View>
               <Text style={styles.cardKicker}>Insights</Text>
@@ -176,22 +197,24 @@ export function StudentDashboardScreen({
           ) : (
             <Text style={styles.mutedText}>Registre treinos e avaliações para gerar insights.</Text>
           )}
-        </GlassCard>
+          </GlassCard>
+        </AnimatedEntrance>
 
-        <View style={styles.shortcutGrid}>
-          <ShortcutTile title="Ver treino" onPress={onOpenWorkout} disabled={!workout} />
-          <ShortcutTile title="Evolução" onPress={onOpenEvolution} />
-          <ShortcutTile title="Avaliações" onPress={onOpenEvaluationHistory} />
+        <AnimatedEntrance delay={240} style={styles.shortcutGrid}>
+          <ShortcutTile title="Ver treino" onPress={handleOpenWorkout} disabled={!workout} />
+          <ShortcutTile title="Evolução" onPress={handleOpenEvolution} />
+          <ShortcutTile title="Avaliações" onPress={handleOpenEvaluationHistory} />
           <ShortcutTile title="Atualizar" onPress={handleRefresh} />
-        </View>
+        </AnimatedEntrance>
 
-        <GlassCard style={styles.compactCard}>
+        <AnimatedEntrance delay={290}>
+          <GlassCard style={styles.compactCard}>
           <View style={styles.cardTitleRow}>
             <View>
               <Text style={styles.cardKicker}>Resumo físico</Text>
               <Text style={styles.cardTitle}>Últimos registros</Text>
             </View>
-            <Pressable onPress={onOpenEvolution} style={styles.linkButton}>
+            <Pressable onPress={handleOpenEvolution} style={styles.linkButton}>
               <Text style={styles.linkText}>Ver evolução</Text>
             </Pressable>
           </View>
@@ -210,7 +233,8 @@ export function StudentDashboardScreen({
               value="Ver evolução"
             />
           </View>
-        </GlassCard>
+          </GlassCard>
+        </AnimatedEntrance>
       </ScrollView>
     </LinearGradient>
   );

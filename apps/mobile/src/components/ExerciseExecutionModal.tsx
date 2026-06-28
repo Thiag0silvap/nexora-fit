@@ -13,6 +13,7 @@ import {
   View,
 } from 'react-native';
 import { WorkoutExercise } from '../types';
+import { selectionHaptic, warningHaptic } from '../utils/haptics';
 
 type ExecutionFormValues = {
   carga: number;
@@ -52,25 +53,33 @@ export function ExerciseExecutionModal({
   }, [visible, exercise?.id]);
 
   async function handleSubmit() {
+    if (saving) {
+      return;
+    }
+
     const normalizedCarga = Number(carga.replace(',', '.'));
     const normalizedReps = Number(repeticoes);
 
     if (!carga.trim() || Number.isNaN(normalizedCarga)) {
+      warningHaptic();
       setValidationError('Informe a carga utilizada.');
       return;
     }
 
     if (!repeticoes.trim() || !Number.isInteger(normalizedReps)) {
+      warningHaptic();
       setValidationError('Informe as repeticoes realizadas.');
       return;
     }
 
     if (normalizedCarga < 0) {
+      warningHaptic();
       setValidationError('A carga nao pode ser negativa.');
       return;
     }
 
     if (normalizedReps <= 0) {
+      warningHaptic();
       setValidationError('As repeticoes precisam ser maiores que zero.');
       return;
     }
@@ -91,7 +100,13 @@ export function ExerciseExecutionModal({
         keyboardVerticalOffset={Platform.OS === 'ios' ? 24 : 0}
         style={styles.overlay}
       >
-        <Pressable style={styles.backdrop} onPress={saving ? undefined : onCancel} />
+        <Pressable
+          style={styles.backdrop}
+          onPress={saving ? undefined : () => {
+            selectionHaptic();
+            onCancel();
+          }}
+        />
         <LinearGradient colors={['#141B2D', '#070B12']} style={styles.panel}>
           <ScrollView
             bounces={false}
@@ -174,11 +189,28 @@ export function ExerciseExecutionModal({
             ) : null}
 
             <View style={styles.actions}>
-              <Pressable disabled={saving} onPress={onCancel} style={styles.cancelButton}>
+              <Pressable
+                disabled={saving}
+                onPress={() => {
+                  selectionHaptic();
+                  onCancel();
+                }}
+                style={({ pressed }) => [
+                  styles.cancelButton,
+                  pressed && !saving ? styles.pressedButton : null,
+                ]}
+              >
                 <Text style={styles.cancelText}>Cancelar</Text>
               </Pressable>
 
-              <Pressable disabled={saving} onPress={handleSubmit} style={styles.submitButton}>
+              <Pressable
+                disabled={saving}
+                onPress={handleSubmit}
+                style={({ pressed }) => [
+                  styles.submitButton,
+                  pressed && !saving ? styles.pressedButton : null,
+                ]}
+              >
                 <LinearGradient colors={['#B7FF4A', '#67E76D']} style={styles.submitGradient}>
                   {saving ? (
                     <ActivityIndicator color="#07110B" />
@@ -352,6 +384,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     marginTop: 2,
+  },
+  pressedButton: {
+    opacity: 0.82,
+    transform: [{ scale: 0.99 }],
   },
   cancelButton: {
     alignItems: 'center',

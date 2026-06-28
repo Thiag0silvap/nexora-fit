@@ -9,11 +9,13 @@ import {
   Text,
   View,
 } from 'react-native';
+import { AnimatedEntrance } from '../components/AnimatedEntrance';
 import { EvaluationComparisonModal } from '../components/EvaluationComparisonModal';
 import { EvaluationHistoryCard } from '../components/EvaluationHistoryCard';
 import { GlassCard } from '../components/GlassCard';
 import { getAvaliacoesFisicasByAluno } from '../services/api';
 import { PhysicalEvaluation } from '../types';
+import { selectionHaptic } from '../utils/haptics';
 
 type EvaluationHistoryScreenProps = {
   alunoId: string;
@@ -101,25 +103,38 @@ export function EvaluationHistoryScreen({
         }
         ListHeaderComponent={
           <>
-            <View style={styles.topBar}>
-              <Pressable onPress={onBack} style={styles.secondaryButton}>
+            <AnimatedEntrance style={styles.topBar}>
+              <Pressable
+                onPress={() => {
+                  selectionHaptic();
+                  onBack();
+                }}
+                style={styles.secondaryButton}
+              >
                 <Text style={styles.secondaryButtonText}>Voltar</Text>
               </Pressable>
-              <Pressable onPress={onLogout} style={styles.secondaryButton}>
+              <Pressable
+                onPress={() => {
+                  selectionHaptic();
+                  onLogout();
+                }}
+                style={styles.secondaryButton}
+              >
                 <Text style={styles.secondaryButtonText}>Sair</Text>
               </Pressable>
-            </View>
+            </AnimatedEntrance>
 
-            <View style={styles.heading}>
+            <AnimatedEntrance delay={60} style={styles.heading}>
               <Text style={styles.kicker}>Nexora Fit</Text>
               <Text style={styles.title}>Histórico de avaliações</Text>
               <Text style={styles.subtitle}>
                 Acompanhe peso e medidas em cada etapa da sua evolução.
               </Text>
-            </View>
+            </AnimatedEntrance>
 
             {!loading && !error && evaluations.length > 0 ? (
-              <GlassCard style={styles.summaryCard}>
+              <AnimatedEntrance delay={110}>
+                <GlassCard style={styles.summaryCard}>
                 <View style={styles.summaryAccent} />
                 <View style={styles.summaryCopy}>
                   <Text style={styles.summaryLabel}>Jornada registrada</Text>
@@ -130,7 +145,8 @@ export function EvaluationHistoryScreen({
                     Toque em um registro para comparar com a avaliação anterior.
                   </Text>
                 </View>
-              </GlassCard>
+                </GlassCard>
+              </AnimatedEntrance>
             ) : null}
           </>
         }
@@ -152,7 +168,10 @@ export function EvaluationHistoryScreen({
         renderItem={({ item, index }) => (
           <EvaluationHistoryCard
             evaluation={item}
-            onPress={() => setSelectedIndex(index)}
+            onPress={() => {
+              selectionHaptic();
+              setSelectedIndex(index);
+            }}
           />
         )}
         showsVerticalScrollIndicator={false}

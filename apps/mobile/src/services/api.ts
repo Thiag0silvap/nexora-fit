@@ -56,17 +56,23 @@ async function request<T>(
   options: RequestOptions = {},
   retryOnUnauthorized = true,
 ): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: options.method ?? 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
-    },
-    body: options.body ? JSON.stringify(options.body) : undefined,
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      method: options.method ?? 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
+      },
+      body: options.body ? JSON.stringify(options.body) : undefined,
+    });
+  } catch {
+    throw new Error('Não foi possível conectar ao Nexora Fit. Verifique sua internet.');
+  }
 
   const text = await response.text();
-  const data = text ? JSON.parse(text) : null;
+  const data = text ? safeJsonParse(text) : null;
 
   if (response.status === 401) {
     if (retryOnUnauthorized && options.token && tokenRefreshHandler) {
@@ -82,10 +88,44 @@ async function request<T>(
   }
 
   if (!response.ok) {
-    throw new Error(data?.message ?? 'Nao foi possivel conectar ao Nexora Fit.');
+    throw new Error(
+      normalizeApiMessage(data?.message) ?? 'Não foi possível concluir a ação agora.',
+    );
   }
 
   return data as T;
+}
+
+function safeJsonParse(text: string) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
+function normalizeApiMessage(message?: string | string[]) {
+  const text = Array.isArray(message) ? message[0] : message;
+
+  if (!text) {
+    return null;
+  }
+
+  const normalized = text.toLowerCase();
+
+  if (normalized.includes('unauthorized')) {
+    return 'Sua sessão expirou. Faça login novamente.';
+  }
+
+  if (normalized.includes('network request failed')) {
+    return 'Não foi possível conectar ao Nexora Fit. Verifique sua internet.';
+  }
+
+  if (normalized.includes('undefined')) {
+    return 'Não foi possível concluir a ação agora.';
+  }
+
+  return text;
 }
 
 export function login(identificador: string, senha: string) {

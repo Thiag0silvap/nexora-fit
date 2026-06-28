@@ -2,13 +2,17 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  LayoutAnimation,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
+  UIManager,
   Vibration,
   View,
 } from 'react-native';
+import { AnimatedEntrance } from '../components/AnimatedEntrance';
 import { Badge } from '../components/Badge';
 import { ExerciseExecutionModal } from '../components/ExerciseExecutionModal';
 import { GlassCard } from '../components/GlassCard';
@@ -22,6 +26,17 @@ import {
   StudentProfile,
   WorkoutExercise,
 } from '../types';
+import {
+  lightImpactHaptic,
+  mediumImpactHaptic,
+  selectionHaptic,
+  successHaptic,
+  warningHaptic,
+} from '../utils/haptics';
+
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 type WorkoutScreenProps = {
   profile: StudentProfile | null;
@@ -135,6 +150,7 @@ export function WorkoutScreen({
     }
 
     setRestTimer((current) => current ? { ...current, status: 'finished' } : null);
+    successHaptic();
     Vibration.vibrate(350);
   }, [restTimer]);
 
@@ -145,6 +161,7 @@ export function WorkoutScreen({
       return;
     }
 
+    mediumImpactHaptic();
     setRestTimer({
       exerciseId: exercise.id,
       durationSeconds,
@@ -154,16 +171,20 @@ export function WorkoutScreen({
   }
 
   function cancelRest(exerciseId: string) {
+    selectionHaptic();
     setRestTimer((current) => current?.exerciseId === exerciseId ? null : current);
   }
 
   function openExecutionModal(exercise: WorkoutExercise) {
+    lightImpactHaptic();
     setExecutionError(null);
     setSelectedExercise(exercise);
     onSuccessDismiss();
   }
 
   function toggleExercise(exerciseId: string) {
+    selectionHaptic();
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpandedExerciseId((current) => current === exerciseId ? null : exerciseId);
   }
 
@@ -186,11 +207,13 @@ export function WorkoutScreen({
 
     try {
       await onRegisterExecution(selectedExercise, values);
+      successHaptic();
       setSelectedExercise(null);
     } catch (submitError) {
+      warningHaptic();
       setExecutionError(
         submitError instanceof Error
-          ? submitError.message
+          ? normalizeErrorMessage(submitError.message)
           : 'Nao foi possivel registrar este exercicio.',
       );
     } finally {
@@ -203,18 +226,28 @@ export function WorkoutScreen({
       <View style={styles.glowTop} />
       <View style={styles.glowBottom} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.topBar}>
+        <AnimatedEntrance style={styles.topBar}>
           <View>
             <Text style={styles.kicker}>Nexora Fit</Text>
             <Text style={styles.title}>Ola, {primeiroNome}</Text>
           </View>
-          <Pressable onPress={onBackToDashboard} style={styles.logoutButton}>
+          <Pressable
+            onPress={() => {
+              selectionHaptic();
+              onBackToDashboard();
+            }}
+            style={styles.logoutButton}
+          >
             <Text style={styles.logoutText}>Dashboard</Text>
           </Pressable>
-        </View>
+        </AnimatedEntrance>
 
-        <Pressable
-          onPress={onOpenEvaluationHistory}
+        <AnimatedEntrance delay={50}>
+          <Pressable
+          onPress={() => {
+            selectionHaptic();
+            onOpenEvaluationHistory();
+          }}
           style={({ pressed }) => [
             styles.evaluationHistoryButton,
             pressed ? styles.evaluationHistoryButtonPressed : null,
@@ -227,7 +260,8 @@ export function WorkoutScreen({
           <View style={styles.evaluationHistoryArrow}>
             <Text style={styles.evaluationHistoryArrowText}>›</Text>
           </View>
-        </Pressable>
+          </Pressable>
+        </AnimatedEntrance>
 
         {hasWorkout ? (
           <ScrollView
@@ -243,7 +277,10 @@ export function WorkoutScreen({
               return (
                 <Pressable
                   key={division.id}
-                  onPress={() => setSelectedDivisionId(division.id)}
+                  onPress={() => {
+                    selectionHaptic();
+                    setSelectedDivisionId(division.id);
+                  }}
                   style={[
                     styles.workoutTab,
                     isSelected ? styles.workoutTabSelected : null,
@@ -263,7 +300,8 @@ export function WorkoutScreen({
           </ScrollView>
         ) : null}
 
-        <GlassCard style={styles.heroCard}>
+        <AnimatedEntrance delay={90}>
+          <GlassCard style={styles.heroCard}>
           <View style={styles.heroHeader}>
             <View style={styles.heroTitleWrap}>
               <Text style={styles.heroLabel}>Treino de hoje</Text>
@@ -304,26 +342,20 @@ export function WorkoutScreen({
               style={styles.progressBar}
             />
           </View>
-        </GlassCard>
+          </GlassCard>
+        </AnimatedEntrance>
 
         {selectedWorkoutCompleted ? (
-          <GlassCard style={styles.completedWorkoutCard}>
+          <AnimatedEntrance delay={120}>
+            <GlassCard style={styles.completedWorkoutCard}>
             <View style={styles.completedWorkoutIcon}>
               <Text style={styles.completedWorkoutIconText}>OK</Text>
             </View>
             <Text style={styles.completedWorkoutText}>
               Treino de hoje concluido! Excelente trabalho.
             </Text>
-          </GlassCard>
-        ) : null}
-
-        {executionSuccess ? (
-          <Pressable onPress={onSuccessDismiss}>
-            <GlassCard style={styles.successCard}>
-              <View style={styles.successDot} />
-              <Text style={styles.successText}>{executionSuccess}</Text>
             </GlassCard>
-          </Pressable>
+          </AnimatedEntrance>
         ) : null}
 
         {loading ? (
@@ -347,7 +379,8 @@ export function WorkoutScreen({
             onAction={onRetry}
           />
         ) : selectedDivision ? (
-          <GlassCard key={selectedDivision.id} style={styles.divisionCard}>
+          <AnimatedEntrance delay={140}>
+            <GlassCard key={selectedDivision.id} style={styles.divisionCard}>
             <View style={styles.divisionHeader}>
               <View style={styles.divisionMarker}>
                 <Text style={styles.divisionMarkerText}>{selectedDivision.ordem}</Text>
@@ -473,6 +506,7 @@ export function WorkoutScreen({
                       />
 
                       <Pressable
+                        disabled={savingExecution}
                         onPress={() => openExecutionModal(item)}
                         style={({ pressed }) => [
                           styles.registerButton,
@@ -494,9 +528,19 @@ export function WorkoutScreen({
                 </View>
               );
             })}
-          </GlassCard>
+            </GlassCard>
+          </AnimatedEntrance>
         ) : null}
       </ScrollView>
+
+      {executionSuccess ? (
+        <Pressable onPress={onSuccessDismiss} style={styles.snackbarWrap}>
+          <LinearGradient colors={['#1D2A18', '#101B12']} style={styles.snackbar}>
+            <View style={styles.successDot} />
+            <Text style={styles.successText}>{executionSuccess}</Text>
+          </LinearGradient>
+        </Pressable>
+      ) : null}
 
       <ExerciseExecutionModal
         error={executionError}
@@ -508,6 +552,24 @@ export function WorkoutScreen({
       />
     </LinearGradient>
   );
+}
+
+function normalizeErrorMessage(message: string) {
+  const normalized = message.toLowerCase();
+
+  if (normalized.includes('unauthorized')) {
+    return 'Sua sessão expirou. Faça login novamente.';
+  }
+
+  if (normalized.includes('network request failed')) {
+    return 'Não foi possível conectar à API. Verifique sua rede.';
+  }
+
+  if (normalized.includes('undefined')) {
+    return 'Não foi possível concluir a ação agora.';
+  }
+
+  return message;
 }
 
 function HistoryCard({ latestExecution }: { latestExecution: LatestExecution }) {
@@ -926,12 +988,25 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     lineHeight: 20,
   },
-  successCard: {
+  snackbarWrap: {
+    bottom: 24,
+    left: 18,
+    position: 'absolute',
+    right: 18,
+  },
+  snackbar: {
     alignItems: 'center',
+    borderColor: 'rgba(183,255,74,0.28)',
+    borderRadius: 20,
+    borderWidth: 1,
     flexDirection: 'row',
     gap: 10,
-    marginBottom: 16,
-    padding: 14,
+    minHeight: 58,
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+    shadowColor: '#B7FF4A',
+    shadowOpacity: 0.22,
+    shadowRadius: 16,
   },
   successDot: {
     backgroundColor: '#B7FF4A',
