@@ -80,7 +80,7 @@ function AdminInstrutoresContent() {
       setError(
         loadError instanceof Error
           ? loadError.message
-          : 'Nao foi possivel carregar os instrutores.',
+          : 'Não foi possível carregar os instrutores.',
       );
     } finally {
       setLoading(false);
@@ -112,7 +112,7 @@ function AdminInstrutoresContent() {
 
   async function handleSubmit(payload: CreateInstrutorPayload | UpdateInstrutorPayload) {
     if (!accessToken) {
-      setFormError('Sessao expirada. Faca login novamente.');
+      setFormError('Sua sessão expirou. Faça login novamente.');
       return;
     }
 
@@ -155,7 +155,7 @@ function AdminInstrutoresContent() {
       setFormError(
         submitError instanceof Error
           ? submitError.message
-          : 'Nao foi possivel salvar o instrutor.',
+          : 'Não foi possível salvar o instrutor.',
       );
     } finally {
       setSaving(false);
@@ -177,7 +177,7 @@ function AdminInstrutoresContent() {
       setFormError(
         reactivationError instanceof Error
           ? reactivationError.message
-          : 'Nao foi possivel reativar o instrutor.',
+          : 'Não foi possível reativar o instrutor.',
       );
     } finally {
       setSaving(false);
@@ -206,7 +206,7 @@ function AdminInstrutoresContent() {
       setError(
         deleteError instanceof Error
           ? deleteError.message
-          : 'Nao foi possivel inativar o instrutor.',
+          : 'Não foi possível inativar o instrutor.',
       );
     }
   }
@@ -224,7 +224,7 @@ function AdminInstrutoresContent() {
     <AdminShell>
       <section className="page-toolbar">
         <div>
-          <p className="eyebrow">Gestao administrativa</p>
+          <p className="eyebrow">Gestão administrativa</p>
           <h2>Instrutores</h2>
           <span>
             {totalInstrutores} instrutor{totalInstrutores === 1 ? '' : 'es'} na seleção
@@ -273,8 +273,8 @@ function AdminInstrutoresContent() {
               <thead>
                 <tr>
                   <th>Nome</th>
-                  <th>Username</th>
-                  <th>Email</th>
+                  <th>Usuário</th>
+                  <th>E-mail</th>
                   <th>CREF</th>
                   <th>Especialidade</th>
                   <th>Status</th>

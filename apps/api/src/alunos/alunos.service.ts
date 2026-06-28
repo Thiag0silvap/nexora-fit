@@ -80,7 +80,7 @@ export class AlunosService {
       }
     }
 
-    throw new ConflictException('Nao foi possivel gerar uma matricula unica.');
+    throw new ConflictException('Não foi possível gerar uma matrícula única.');
   }
 
   findAll(user: AuthUser, status?: string) {
@@ -134,7 +134,7 @@ export class AlunosService {
       select: { usuarioId: true },
     });
 
-    if (!aluno) throw new NotFoundException('Aluno inativo nao encontrado.');
+    if (!aluno) throw new NotFoundException('Aluno inativo não encontrado.');
     const senhaHash = await bcrypt.hash(dto.senha, 10);
 
     return this.prisma.$transaction(async (tx) => {
@@ -165,7 +165,7 @@ export class AlunosService {
     });
 
     if (!aluno) {
-      throw new NotFoundException('Aluno nao encontrado.');
+      throw new NotFoundException('Aluno não encontrado.');
     }
 
     return aluno;
@@ -272,7 +272,7 @@ export class AlunosService {
     });
 
     if (!aluno) {
-      throw new NotFoundException('Aluno nao encontrado.');
+      throw new NotFoundException('Aluno não encontrado.');
     }
 
     return aluno;
@@ -289,7 +289,7 @@ export class AlunosService {
     });
 
     if (usuario && usuario.id !== ignoredUsuarioId) {
-      throw new ConflictException('Username ja cadastrado.');
+      throw new ConflictException('Usuário já cadastrado.');
     }
   }
 
@@ -306,7 +306,7 @@ export class AlunosService {
     });
 
     if (usuario && usuario.id !== ignoredUsuarioId) {
-      throw new ConflictException('Email ja cadastrado.');
+      throw new ConflictException('E-mail já cadastrado.');
     }
   }
 
@@ -333,7 +333,7 @@ export class AlunosService {
     if (!status || status === 'ativos') return true;
     if (status === 'inativos') return false;
     if (status === 'todos') return undefined;
-    throw new ConflictException('Filtro de status invalido.');
+    throw new ConflictException('Filtro de status inválido.');
   }
 
   private isMatriculaConflict(error: unknown) {
@@ -352,15 +352,15 @@ export class AlunosService {
         : undefined;
 
       if (target?.includes('email')) {
-        throw new ConflictException('Email ja cadastrado.');
+        throw new ConflictException('E-mail já cadastrado.');
       }
 
       if (target?.includes('username')) {
-        throw new ConflictException('Username ja cadastrado.');
+        throw new ConflictException('Usuário já cadastrado.');
       }
 
       if (target?.includes('matricula')) {
-        throw new ConflictException('Matricula ja cadastrada.');
+        throw new ConflictException('Matrícula já cadastrada.');
       }
 
       throw new ConflictException('Registro duplicado.');

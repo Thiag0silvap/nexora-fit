@@ -39,7 +39,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
 
     if (!usuario) {
-      throw new UnauthorizedException('Usuario nao encontrado ou inativo.');
+      throw new UnauthorizedException('Usuário não encontrado ou inativo.');
     }
 
     return {

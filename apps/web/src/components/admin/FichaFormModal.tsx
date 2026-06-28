@@ -40,7 +40,7 @@ export function FichaFormModal(props: Props) {
     event.preventDefault();
 
     if (nome.trim().length < 2) {
-      setValidationError('Informe um nome válido para a ficha.');
+      setValidationError('Informe um nome valido para a ficha.');
       return;
     }
 

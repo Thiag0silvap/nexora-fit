@@ -80,7 +80,7 @@ export function LoginScreen({
               editable={!loading}
               keyboardType="email-address"
               onChangeText={setIdentifier}
-              placeholder="usuario ou email"
+              placeholder="usuário ou e-mail"
               placeholderTextColor="#7F8A9A"
               style={styles.input}
               value={identifier}
@@ -105,7 +105,7 @@ export function LoginScreen({
               <View style={[styles.checkbox, rememberUser ? styles.checkboxChecked : null]}>
                 {rememberUser ? <Text style={styles.checkboxText}>✓</Text> : null}
               </View>
-              <Text style={styles.rememberText}>Lembrar usuário</Text>
+              <Text style={styles.rememberText}>Lembrar usuario</Text>
             </Pressable>
 
             {error ? <Text style={styles.error}>{error}</Text> : null}

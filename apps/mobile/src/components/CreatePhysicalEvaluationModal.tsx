@@ -80,7 +80,7 @@ export function CreatePhysicalEvaluationModal({
     const normalizedMeasures: Partial<Record<keyof BodyMeasures, number>> = {};
 
     if (peso.trim() && normalizedWeight === undefined) {
-      setValidationError('Informe um peso valido.');
+      setValidationError('Informe um peso válido.');
       return;
     }
 
@@ -89,7 +89,7 @@ export function CreatePhysicalEvaluationModal({
       const normalizedValue = normalizeNumber(rawValue);
 
       if (rawValue.trim() && normalizedValue === undefined) {
-        setValidationError(`Informe uma medida valida para ${field.label}.`);
+        setValidationError(`Informe uma medida válida para ${field.label}.`);
         return;
       }
 
@@ -187,7 +187,7 @@ export function CreatePhysicalEvaluationModal({
                   {saving ? (
                     <ActivityIndicator color="#07110B" />
                   ) : (
-                    <Text style={styles.submitText}>Salvar avaliacao</Text>
+                    <Text style={styles.submitText}>Salvar avaliação</Text>
                   )}
                 </LinearGradient>
               </Pressable>

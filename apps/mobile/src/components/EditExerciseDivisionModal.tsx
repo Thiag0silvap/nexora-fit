@@ -69,12 +69,12 @@ export function EditExerciseDivisionModal({
     const normalizedOrder = Number(ordem);
 
     if (!series.trim() || !Number.isInteger(normalizedSeries) || normalizedSeries <= 0) {
-      setValidationError('Informe uma quantidade valida de series.');
+      setValidationError('Informe uma quantidade válida de séries.');
       return;
     }
 
     if (!repeticoes.trim()) {
-      setValidationError('Informe as repeticoes.');
+      setValidationError('Informe as repetições.');
       return;
     }
 
@@ -82,12 +82,12 @@ export function EditExerciseDivisionModal({
       normalizedRest !== undefined &&
       (!Number.isInteger(normalizedRest) || normalizedRest < 0)
     ) {
-      setValidationError('Informe um descanso valido em segundos.');
+      setValidationError('Informe um descanso válido em segundos.');
       return;
     }
 
     if (!ordem.trim() || !Number.isInteger(normalizedOrder) || normalizedOrder <= 0) {
-      setValidationError('Informe uma ordem valida.');
+      setValidationError('Informe uma ordem válida.');
       return;
     }
 
@@ -117,15 +117,15 @@ export function EditExerciseDivisionModal({
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.handle} />
-            <Text style={styles.kicker}>Editar exercicio</Text>
-            <Text style={styles.title}>{exercise?.exercicio.nome ?? 'Exercicio'}</Text>
+            <Text style={styles.kicker}>Editar exercício</Text>
+            <Text style={styles.title}>{exercise?.exercicio.nome ?? 'Exercício'}</Text>
             <Text style={styles.subtitle}>
-              Ajuste a prescricao do exercicio dentro deste treino.
+              Ajuste a prescrição do exercício dentro deste treino.
             </Text>
 
             <View style={styles.formRow}>
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Series</Text>
+                <Text style={styles.inputLabel}>Séries</Text>
                 <TextInput
                   editable={!saving}
                   keyboardType="number-pad"
@@ -138,7 +138,7 @@ export function EditExerciseDivisionModal({
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Repeticoes</Text>
+                <Text style={styles.inputLabel}>Repetições</Text>
                 <TextInput
                   editable={!saving}
                   onChangeText={setRepeticoes}

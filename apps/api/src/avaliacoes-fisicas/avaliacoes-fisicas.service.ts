@@ -94,7 +94,7 @@ export class AvaliacoesFisicasService {
     });
 
     if (!aluno) {
-      throw new NotFoundException('Aluno nao encontrado.');
+      throw new NotFoundException('Aluno não encontrado.');
     }
 
     return aluno;

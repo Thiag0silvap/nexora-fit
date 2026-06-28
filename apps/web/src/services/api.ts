@@ -50,7 +50,7 @@ async function request<T>(path: string, options: RequestOptions = {}) {
   const data = text ? JSON.parse(text) : null;
 
   if (!response.ok) {
-    throw new Error(data?.message ?? 'Nao foi possivel conectar ao Nexora Fit.');
+    throw new Error(data?.message ?? 'Não foi possível conectar ao Nexora Fit.');
   }
 
   return data as T;

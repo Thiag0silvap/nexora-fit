@@ -59,7 +59,7 @@ function LoginContent() {
       setError(
         loginError instanceof Error
           ? loginError.message
-          : 'Nao foi possivel acessar o painel.',
+          : 'Não foi possível acessar o painel.',
       );
     } finally {
       setSubmitting(false);

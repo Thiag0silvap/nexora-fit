@@ -9,13 +9,13 @@ export function AdminHeader({ onLogout }: { onLogout: () => void }) {
     <header className="admin-header">
       <div>
         <p className="admin-header-kicker">Nexora Fit · Painel administrativo</p>
-        <h1>Dashboard</h1>
+        <h1>Painel</h1>
       </div>
 
       <div className="user-area">
         <div className="user-avatar">{user?.nome.charAt(0).toUpperCase() ?? 'F'}</div>
         <div className="user-meta">
-          <strong>{user?.nome ?? 'Usuario'}</strong>
+          <strong>{user?.nome ?? 'Usuário'}</strong>
           <span>{formatRole(user?.role)}</span>
         </div>
         <button className="logout-button" type="button" onClick={onLogout}>

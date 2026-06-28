@@ -214,7 +214,7 @@ export function WorkoutScreen({
       setExecutionError(
         submitError instanceof Error
           ? normalizeErrorMessage(submitError.message)
-          : 'Nao foi possivel registrar este exercicio.',
+          : 'Não foi possível registrar este exercício.',
       );
     } finally {
       setSavingExecution(false);
@@ -229,7 +229,7 @@ export function WorkoutScreen({
         <AnimatedEntrance style={styles.topBar}>
           <View>
             <Text style={styles.kicker}>Nexora Fit</Text>
-            <Text style={styles.title}>Ola, {primeiroNome}</Text>
+            <Text style={styles.title}>Olá, {primeiroNome}</Text>
           </View>
           <Pressable
             onPress={() => {
@@ -238,7 +238,7 @@ export function WorkoutScreen({
             }}
             style={styles.logoutButton}
           >
-            <Text style={styles.logoutText}>Dashboard</Text>
+            <Text style={styles.logoutText}>Início</Text>
           </Pressable>
         </AnimatedEntrance>
 
@@ -329,8 +329,8 @@ export function WorkoutScreen({
               <View>
                 <Text style={styles.progressLabel}>Progresso do treino</Text>
                 <Text style={styles.progressText}>
-                  {selectedCompleted} de {selectedTotal} exercicio
-                  {selectedTotal === 1 ? '' : 's'} concluido
+                  {selectedCompleted} de {selectedTotal} exercício
+                  {selectedTotal === 1 ? '' : 's'} concluído
                   {selectedTotal === 1 ? '' : 's'}
                 </Text>
               </View>
@@ -352,7 +352,7 @@ export function WorkoutScreen({
               <Text style={styles.completedWorkoutIconText}>OK</Text>
             </View>
             <Text style={styles.completedWorkoutText}>
-              Treino de hoje concluido! Excelente trabalho.
+              Treino de hoje concluído! Excelente trabalho.
             </Text>
             </GlassCard>
           </AnimatedEntrance>
@@ -362,7 +362,7 @@ export function WorkoutScreen({
           <StateCard
             loading
             title="Preparando seu treino"
-            text="Buscando sua ficha ativa e organizando as divisoes."
+            text="Buscando sua ficha ativa e organizando as divisões."
           />
         ) : error ? (
           <StateCard
@@ -373,8 +373,8 @@ export function WorkoutScreen({
           />
         ) : !hasWorkout ? (
           <StateCard
-            title="Treino ainda nao publicado"
-            text="Quando seu instrutor liberar uma ficha ativa, ela aparecera aqui."
+            title="Treino ainda não publicado"
+            text="Quando seu instrutor liberar uma ficha ativa, ela aparecerá aqui."
             actionLabel="Atualizar"
             onAction={onRetry}
           />
@@ -388,7 +388,7 @@ export function WorkoutScreen({
               <View style={styles.divisionTitleWrap}>
                 <Text style={styles.divisionTitle}>{selectedDivision.nome}</Text>
                 <Text style={styles.divisionSubtitle}>
-                  {selectedCompleted} de {selectedTotal} concluido
+                  {selectedCompleted} de {selectedTotal} concluído
                   {selectedTotal === 1 ? '' : 's'}
                 </Text>
                 <ProgressBar
@@ -415,7 +415,7 @@ export function WorkoutScreen({
                   ]}
                 >
                   <Pressable
-                    accessibilityHint="Expande ou recolhe os detalhes do exercicio"
+                    accessibilityHint="Expande ou recolhe os detalhes do exercício"
                     accessibilityRole="button"
                     accessibilityState={{ expanded: isExpanded }}
                     onPress={() => toggleExercise(item.id)}
@@ -459,7 +459,7 @@ export function WorkoutScreen({
                               isCompleted ? styles.compactStatusTextDone : null,
                             ]}
                           >
-                            {isCompleted ? 'Concluido' : 'Pendente'}
+                            {isCompleted ? 'Concluído' : 'Pendente'}
                           </Text>
                         </View>
                         <View style={styles.expandButton}>
@@ -469,8 +469,8 @@ export function WorkoutScreen({
                     </View>
 
                     <View style={styles.compactMetrics}>
-                      <CompactMetric label="Series" value={String(item.series)} />
-                      <CompactMetric label="Reps" value={item.repeticoes} />
+                      <CompactMetric label="Séries" value={String(item.series)} />
+                      <CompactMetric label="Repetições" value={item.repeticoes} />
                       <CompactMetric
                         label="Descanso"
                         value={item.descansoSegundos ? `${item.descansoSegundos}s` : '-'}
@@ -482,7 +482,7 @@ export function WorkoutScreen({
                     <View style={styles.exerciseDetails}>
                       {item.observacao ? (
                         <View style={styles.exerciseNotePanel}>
-                          <Text style={styles.exerciseNoteLabel}>Orientacao</Text>
+                          <Text style={styles.exerciseNoteLabel}>Orientação</Text>
                           <Text style={styles.exerciseNote}>{item.observacao}</Text>
                         </View>
                       ) : null}
@@ -520,7 +520,7 @@ export function WorkoutScreen({
                             isCompleted ? styles.registerTextDone : null,
                           ]}
                         >
-                          {isCompleted ? 'Concluido' : 'Registrar carga'}
+                          {isCompleted ? 'Concluído' : 'Registrar carga'}
                         </Text>
                       </Pressable>
                     </View>
@@ -576,7 +576,7 @@ function HistoryCard({ latestExecution }: { latestExecution: LatestExecution }) 
   if (!latestExecution) {
     return (
       <View style={styles.historyCard}>
-        <Text style={styles.historyEmpty}>Sem historico ainda</Text>
+        <Text style={styles.historyEmpty}>Sem histórico ainda</Text>
       </View>
     );
   }
@@ -584,7 +584,7 @@ function HistoryCard({ latestExecution }: { latestExecution: LatestExecution }) 
   return (
     <View style={styles.historyCard}>
       <View style={styles.historyItem}>
-        <Text style={styles.historyLabel}>Ultima carga global</Text>
+        <Text style={styles.historyLabel}>Última carga global</Text>
         <Text style={styles.historyValue}>{formatLoad(latestExecution.ultimaCarga)}</Text>
       </View>
       <View style={styles.historyDivider} />
@@ -596,7 +596,7 @@ function HistoryCard({ latestExecution }: { latestExecution: LatestExecution }) 
       </View>
       <View style={styles.historyDivider} />
       <View style={styles.historyItem}>
-        <Text style={styles.historyLabel}>Ultima execucao</Text>
+        <Text style={styles.historyLabel}>Última execução</Text>
         <Text style={styles.historyValue}>
           {formatDate(latestExecution.ultimaExecucao)}
         </Text>

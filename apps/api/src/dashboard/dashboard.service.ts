@@ -54,7 +54,7 @@ export class DashboardService {
     });
 
     if (!aluno) {
-      throw new NotFoundException('Perfil de aluno nao encontrado.');
+      throw new NotFoundException('Perfil de aluno não encontrado.');
     }
 
     const [avaliacoes, execucoes, evolucoes] = await Promise.all([

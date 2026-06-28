@@ -41,7 +41,7 @@ export function InstructorStudentsScreen({
       setError(
         loadError instanceof Error
           ? loadError.message
-          : 'Nao foi possivel carregar os alunos.',
+          : 'Não foi possível carregar os alunos.',
       );
     } finally {
       setLoading(false);
@@ -79,7 +79,7 @@ export function InstructorStudentsScreen({
           <StateCard loading title="Carregando alunos" text="Buscando alunos ativos." />
         ) : error ? (
           <StateCard
-            title="Nao foi possivel carregar"
+            title="Não foi possível carregar"
             text={error}
             actionLabel="Tentar novamente"
             onAction={loadStudents}
@@ -102,7 +102,7 @@ export function InstructorStudentsScreen({
                   <View style={styles.studentTitleWrap}>
                     <Text style={styles.studentName}>{student.usuario.nome}</Text>
                     <Text style={styles.studentEmail}>
-                      {student.usuario.email ?? 'Email não informado'}
+                      {student.usuario.email ?? 'E-mail não informado'}
                     </Text>
                   </View>
                   <Badge label="Ver ficha" tone="green" />

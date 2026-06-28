@@ -25,7 +25,7 @@ export class AuthService {
     const identificador = loginDto.identificador ?? loginDto.email;
 
     if (!identificador) {
-      throw new UnauthorizedException('Informe usuario ou email.');
+      throw new UnauthorizedException('Informe usuário ou e-mail.');
     }
 
     const usuario = await this.prisma.usuario.findFirst({
@@ -45,13 +45,13 @@ export class AuthService {
     });
 
     if (!usuario?.ativo) {
-      throw new UnauthorizedException('Credenciais invalidas.');
+      throw new UnauthorizedException('Credenciais inválidas.');
     }
 
     const senhaValida = await bcrypt.compare(loginDto.senha, usuario.senhaHash);
 
     if (!senhaValida) {
-      throw new UnauthorizedException('Credenciais invalidas.');
+      throw new UnauthorizedException('Credenciais inválidas.');
     }
 
     const user: AuthUser = {
@@ -97,7 +97,7 @@ export class AuthService {
       });
 
       if (!usuario) {
-        throw new UnauthorizedException('Sessao expirada.');
+        throw new UnauthorizedException('Sessão expirada.');
       }
 
       const user: AuthUser = {
@@ -115,7 +115,7 @@ export class AuthService {
         user,
       };
     } catch {
-      throw new UnauthorizedException('Sessao expirada.');
+      throw new UnauthorizedException('Sessão expirada.');
     }
   }
 

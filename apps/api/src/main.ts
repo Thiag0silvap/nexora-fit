@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationError, ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -17,6 +17,11 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       transform: true,
+      exceptionFactory: (errors: ValidationError[]) => {
+        const fields = errors.map((error) => error.property).filter(Boolean);
+        const suffix = fields.length ? ` Campos: ${fields.join(', ')}.` : '';
+        return new BadRequestException(`Dados inválidos. Verifique os campos informados.${suffix}`);
+      },
     }),
   );
 

@@ -76,7 +76,7 @@ function AdminAlunosContent() {
       setError(
         loadError instanceof Error
           ? loadError.message
-          : 'Nao foi possivel carregar os alunos.',
+          : 'Não foi possível carregar os alunos.',
       );
     } finally {
       setLoading(false);
@@ -108,7 +108,7 @@ function AdminAlunosContent() {
 
   async function handleSubmit(payload: CreateAlunoPayload | UpdateAlunoPayload) {
     if (!accessToken) {
-      setFormError('Sessao expirada. Faca login novamente.');
+      setFormError('Sua sessão expirou. Faça login novamente.');
       return;
     }
 
@@ -147,7 +147,7 @@ function AdminAlunosContent() {
       setFormError(
         submitError instanceof Error
           ? submitError.message
-          : 'Nao foi possivel salvar o aluno.',
+          : 'Não foi possível salvar o aluno.',
       );
     } finally {
       setSaving(false);
@@ -169,7 +169,7 @@ function AdminAlunosContent() {
       setFormError(
         reactivationError instanceof Error
           ? reactivationError.message
-          : 'Nao foi possivel reativar o aluno.',
+          : 'Não foi possível reativar o aluno.',
       );
     } finally {
       setSaving(false);
@@ -198,7 +198,7 @@ function AdminAlunosContent() {
       setError(
         deleteError instanceof Error
           ? deleteError.message
-          : 'Nao foi possivel inativar o aluno.',
+          : 'Não foi possível inativar o aluno.',
       );
     }
   }
@@ -216,7 +216,7 @@ function AdminAlunosContent() {
     <AdminShell>
       <section className="page-toolbar">
         <div>
-          <p className="eyebrow">Gestao administrativa</p>
+          <p className="eyebrow">Gestão administrativa</p>
           <h2>Alunos</h2>
           <span>{totalAlunos} aluno{totalAlunos === 1 ? '' : 's'} na seleção</span>
         </div>
@@ -263,8 +263,8 @@ function AdminAlunosContent() {
               <thead>
                 <tr>
                   <th>Nome</th>
-                  <th>Username</th>
-                  <th>Email</th>
+                  <th>Usuário</th>
+                  <th>E-mail</th>
                   <th>Matrícula</th>
                   <th>Objetivo</th>
                   <th>Peso atual</th>

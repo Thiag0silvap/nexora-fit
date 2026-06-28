@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '../../contexts/AuthContext';
 
 const navigationItems = [
-  { label: 'Dashboard', href: '/admin' },
+  { label: 'Painel', href: '/admin' },
   { label: 'Alunos', href: '/admin/alunos' },
   { label: 'Instrutores', href: '/admin/instrutores' },
   { label: 'Exercícios', href: '/admin/exercicios' },

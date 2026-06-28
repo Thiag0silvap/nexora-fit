@@ -216,7 +216,7 @@ function AdminExerciciosContent() {
       setError(
         loadError instanceof Error
           ? loadError.message
-          : 'Nao foi possivel carregar os exercícios.',
+          : 'Não foi possível carregar os exercícios.',
       );
     } finally {
       setLoading(false);
@@ -247,7 +247,7 @@ function AdminExerciciosContent() {
 
   async function handleSubmit(payload: CreateExercicioPayload | UpdateExercicioPayload) {
     if (!accessToken) {
-      setFormError('Sessao expirada. Faca login novamente.');
+      setFormError('Sua sessão expirou. Faça login novamente.');
       return;
     }
 
@@ -273,7 +273,7 @@ function AdminExerciciosContent() {
       setFormError(
         submitError instanceof Error
           ? submitError.message
-          : 'Nao foi possivel salvar o exercício.',
+          : 'Não foi possível salvar o exercício.',
       );
     } finally {
       setSaving(false);
@@ -302,7 +302,7 @@ function AdminExerciciosContent() {
       setError(
         deleteError instanceof Error
           ? deleteError.message
-          : 'Nao foi possivel inativar o exercício.',
+          : 'Não foi possível inativar o exercício.',
       );
     }
   }

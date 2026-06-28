@@ -57,7 +57,7 @@ export function EditWorkoutDivisionModal({
     }
 
     if (!ordem.trim() || !Number.isInteger(normalizedOrder) || normalizedOrder <= 0) {
-      setValidationError('Informe uma ordem valida.');
+      setValidationError('Informe uma ordem válida.');
       return;
     }
 

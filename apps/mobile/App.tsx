@@ -282,7 +282,7 @@ export default function App() {
         setScreenError(
           workoutError instanceof Error
             ? workoutError.message
-            : 'Nao foi possivel carregar seu treino.',
+            : 'Não foi possível carregar seu treino.',
         );
         setWorkout(null);
       }
@@ -290,7 +290,7 @@ export default function App() {
       setScreenError(
         error instanceof Error
           ? error.message
-          : 'Nao foi possivel carregar seu perfil.',
+          : 'Não foi possível carregar seu perfil.',
       );
       setProfile(null);
       setWorkout(null);
@@ -332,7 +332,7 @@ export default function App() {
       }
     } catch (error) {
       setLoginError(
-        error instanceof Error ? error.message : 'Email ou senha invalidos.',
+        error instanceof Error ? error.message : 'E-mail ou senha inválidos.',
       );
       setAccessToken(null);
       setAuthenticatedUser(null);
@@ -350,7 +350,7 @@ export default function App() {
     values: Omit<CreateExecutionPayload, 'exercicioDivisaoId'>,
   ) {
     if (!accessToken) {
-      throw new Error('Sessao expirada. Entre novamente.');
+      throw new Error('Sessão expirada. Entre novamente.');
     }
 
     const execucao = await createExecucao(accessToken, {
@@ -516,9 +516,9 @@ function UnsupportedProfileScreen({
       <View style={styles.content}>
         <GlassCard style={styles.unsupportedCard}>
           <Text style={styles.unsupportedKicker}>Nexora Fit Mobile</Text>
-          <Text style={styles.unsupportedTitle}>Perfil ainda nao disponivel no mobile.</Text>
+          <Text style={styles.unsupportedTitle}>Perfil ainda não disponivel no mobile.</Text>
           <Text style={styles.unsupportedText}>
-            O perfil {role} sera liberado em uma proxima versao do aplicativo.
+            O perfil {role} será liberado em uma próxima versão do aplicativo.
           </Text>
           <Pressable onPress={onLogout} style={styles.unsupportedButton}>
             <Text style={styles.unsupportedButtonText}>Sair</Text>

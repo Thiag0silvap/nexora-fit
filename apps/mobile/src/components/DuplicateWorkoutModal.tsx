@@ -80,8 +80,8 @@ export function DuplicateWorkoutModal({
             <Text style={styles.kicker}>Duplicar ficha</Text>
             <Text style={styles.title}>{workoutName}</Text>
             <Text style={styles.subtitle}>
-              A copia sera criada como ficha ativa, mantendo treinos e exercicios. Historico de
-              cargas nao sera copiado.
+              A cópia será criada como ficha ativa, mantendo treinos e exercícios. O histórico de
+              cargas não será copiado.
             </Text>
 
             <Text style={styles.inputLabel}>Nome da nova ficha</Text>

@@ -70,8 +70,8 @@ export function ReactivationModal({ entity, record, saving, error, onClose, onRe
               <p>Deseja reativar este cadastro mantendo todo o histórico existente?</p>
               <dl>
                 <div><dt>Nome</dt><dd>{record.nome}</dd></div>
-                <div><dt>Username</dt><dd>{record.username}</dd></div>
-                <div><dt>Email</dt><dd>{record.email ?? 'Não informado'}</dd></div>
+                <div><dt>Usuário</dt><dd>{record.username}</dd></div>
+                <div><dt>E-mail</dt><dd>{record.email ?? 'Não informado'}</dd></div>
                 {record.matricula ? <div><dt>Matrícula</dt><dd>{record.matricula}</dd></div> : null}
               </dl>
             </div>

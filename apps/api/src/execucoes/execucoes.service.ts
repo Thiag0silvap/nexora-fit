@@ -189,7 +189,7 @@ export class ExecucoesService {
     });
 
     if (!aluno) {
-      throw new NotFoundException('Perfil de aluno nao encontrado.');
+      throw new NotFoundException('Perfil de aluno não encontrado.');
     }
 
     return aluno;
@@ -220,7 +220,7 @@ export class ExecucoesService {
 
     if (!exercicioDivisao) {
       throw new NotFoundException(
-        'Exercicio da divisao nao encontrado para a ficha ativa do aluno.',
+        'Exercício da divisão não encontrado para a ficha ativa do aluno.',
       );
     }
 
@@ -239,7 +239,7 @@ export class ExecucoesService {
     });
 
     if (!exercicio) {
-      throw new NotFoundException('Exercicio nao encontrado ou inativo.');
+      throw new NotFoundException('Exercício não encontrado ou inativo.');
     }
   }
 

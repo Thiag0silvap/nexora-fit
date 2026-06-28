@@ -109,7 +109,7 @@ export function InstructorStudentWorkoutScreen({
 
       if (!activeWorkout) {
         setWorkout(null);
-        setError('Este aluno ainda nao possui ficha ativa.');
+        setError('Este aluno ainda não possui ficha ativa.');
         return;
       }
 
@@ -119,7 +119,7 @@ export function InstructorStudentWorkoutScreen({
       setError(
         loadError instanceof Error
           ? loadError.message
-          : 'Nao foi possivel carregar a ficha do aluno.',
+          : 'Não foi possível carregar a ficha do aluno.',
       );
       setWorkout(null);
     } finally {
@@ -145,12 +145,12 @@ export function InstructorStudentWorkoutScreen({
 
       setLatestEvaluation(createdEvaluation);
       setEvaluationModalVisible(false);
-      setSuccessMessage('Avaliacao fisica registrada com sucesso.');
+      setSuccessMessage('Avaliação física registrada com sucesso.');
     } catch (createEvaluationError) {
       setEvaluationError(
         createEvaluationError instanceof Error
           ? createEvaluationError.message
-          : 'Nao foi possivel registrar a avaliacao fisica.',
+          : 'Não foi possível registrar a avaliação física.',
       );
     } finally {
       setSavingEvaluation(false);
@@ -159,7 +159,7 @@ export function InstructorStudentWorkoutScreen({
 
   async function handleCreateWorkout(values: { nome: string; observacao?: string }) {
     if (!instructorId) {
-      setCreateError('Nao foi possivel identificar o perfil de instrutor.');
+      setCreateError('Não foi possível identificar o perfil de instrutor.');
       return;
     }
 
@@ -182,7 +182,7 @@ export function InstructorStudentWorkoutScreen({
       setCreateError(
         createWorkoutError instanceof Error
           ? createWorkoutError.message
-          : 'Nao foi possivel criar a ficha.',
+          : 'Não foi possível criar a ficha.',
       );
     } finally {
       setCreatingWorkout(false);
@@ -210,7 +210,7 @@ export function InstructorStudentWorkoutScreen({
       setDuplicateError(
         duplicateWorkoutError instanceof Error
           ? duplicateWorkoutError.message
-          : 'Nao foi possivel duplicar a ficha.',
+          : 'Não foi possível duplicar a ficha.',
       );
     } finally {
       setDuplicatingWorkout(false);
@@ -240,7 +240,7 @@ export function InstructorStudentWorkoutScreen({
       setDivisionError(
         createDivisionError instanceof Error
           ? createDivisionError.message
-          : 'Nao foi possivel adicionar o treino.',
+          : 'Não foi possível adicionar o treino.',
       );
     } finally {
       setCreatingDivision(false);
@@ -258,7 +258,7 @@ export function InstructorStudentWorkoutScreen({
       setDivisionExerciseError(
         loadExerciseError instanceof Error
           ? loadExerciseError.message
-          : 'Nao foi possivel carregar a biblioteca de exercicios.',
+        : 'Não foi possível carregar a biblioteca de exercícios.',
       );
     } finally {
       setLoadingExercises(false);
@@ -283,7 +283,7 @@ export function InstructorStudentWorkoutScreen({
     observacao?: string;
   }) {
     if (!selectedDivision) {
-      setDivisionExerciseError('Selecione um treino para receber o exercicio.');
+      setDivisionExerciseError('Selecione um treino para receber o exercício.');
       return;
     }
 
@@ -299,13 +299,13 @@ export function InstructorStudentWorkoutScreen({
       setExpandedDivisionId(selectedDivision.id);
       setExerciseModalVisible(false);
       setSelectedDivision(null);
-      setSuccessMessage('Exercicio adicionado com sucesso.');
+      setSuccessMessage('Exercício adicionado com sucesso.');
       await loadWorkout();
     } catch (createExerciseError) {
       setDivisionExerciseError(
         createExerciseError instanceof Error
           ? createExerciseError.message
-          : 'Nao foi possivel adicionar o exercicio.',
+          : 'Não foi possível adicionar o exercício.',
       );
     } finally {
       setCreatingDivisionExercise(false);
@@ -338,7 +338,7 @@ export function InstructorStudentWorkoutScreen({
       setEditDivisionError(
         updateDivisionError instanceof Error
           ? updateDivisionError.message
-          : 'Nao foi possivel atualizar o treino.',
+          : 'Não foi possível atualizar o treino.',
       );
     } finally {
       setEditingDivision(false);
@@ -370,10 +370,10 @@ export function InstructorStudentWorkoutScreen({
       await loadWorkout();
     } catch (removeDivisionError) {
       Alert.alert(
-        'Nao foi possivel remover',
+        'Não foi possível remover',
         removeDivisionError instanceof Error
           ? removeDivisionError.message
-          : 'Nao foi possivel remover o treino.',
+          : 'Não foi possível remover o treino.',
       );
     }
   }
@@ -392,7 +392,7 @@ export function InstructorStudentWorkoutScreen({
     ordem: number;
   }) {
     if (!selectedEditExercise) {
-      setEditExerciseError('Selecione um exercicio para editar.');
+      setEditExerciseError('Selecione um exercício para editar.');
       return;
     }
 
@@ -411,13 +411,13 @@ export function InstructorStudentWorkoutScreen({
 
       setEditExerciseModalVisible(false);
       setSelectedEditExercise(null);
-      setSuccessMessage('Exercicio atualizado com sucesso.');
+      setSuccessMessage('Exercício atualizado com sucesso.');
       await loadWorkout();
     } catch (updateExerciseError) {
       setEditExerciseError(
         updateExerciseError instanceof Error
           ? updateExerciseError.message
-          : 'Nao foi possivel atualizar o exercicio.',
+          : 'Não foi possível atualizar o exercício.',
       );
     } finally {
       setEditingDivisionExercise(false);
@@ -426,8 +426,8 @@ export function InstructorStudentWorkoutScreen({
 
   function confirmRemoveExercise(exercise: WorkoutExercise) {
     Alert.alert(
-      'Remover exercicio',
-      'Tem certeza que deseja remover este exercicio da ficha?',
+      'Remover exercício',
+      'Tem certeza que deseja remover este exercício da ficha?',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
@@ -452,14 +452,14 @@ export function InstructorStudentWorkoutScreen({
         setExpandedDivisionId(parentDivision.id);
       }
 
-      setSuccessMessage('Exercicio removido com sucesso.');
+      setSuccessMessage('Exercício removido com sucesso.');
       await loadWorkout();
     } catch (removeExerciseError) {
       Alert.alert(
-        'Nao foi possivel remover',
+        'Não foi possível remover',
         removeExerciseError instanceof Error
           ? removeExerciseError.message
-          : 'Nao foi possivel remover o exercicio.',
+          : 'Não foi possível remover o exercício.',
       );
     }
   }
@@ -489,7 +489,7 @@ export function InstructorStudentWorkoutScreen({
               <Text style={styles.kicker}>Ficha do aluno</Text>
               <Text style={styles.title}>{student.usuario.nome}</Text>
               <Text ellipsizeMode="tail" numberOfLines={1} style={styles.subtitle}>
-                {student.usuario.email ?? 'Email não informado'}
+                {student.usuario.email ?? 'E-mail não informado'}
               </Text>
             </View>
           </View>
@@ -529,7 +529,7 @@ export function InstructorStudentWorkoutScreen({
         <GlassCard style={styles.evaluationCard}>
           <View style={styles.evaluationHeader}>
             <View>
-              <Text style={styles.evaluationLabel}>Ultima avaliacao</Text>
+              <Text style={styles.evaluationLabel}>Última avaliação</Text>
               <Text style={styles.evaluationTitle}>
                 {latestEvaluation ? formatDate(latestEvaluation.createdAt) : 'Sem registro'}
               </Text>
@@ -550,7 +550,7 @@ export function InstructorStudentWorkoutScreen({
                   value={latestEvaluation.medidasCorporais?.cintura}
                 />
                 <EvaluationMeasure
-                  label="Abdomen"
+                  label="Abdômen"
                   value={latestEvaluation.medidasCorporais?.abdomen}
                 />
                 <EvaluationMeasure
@@ -558,7 +558,7 @@ export function InstructorStudentWorkoutScreen({
                   value={latestEvaluation.medidasCorporais?.peitoral}
                 />
                 <EvaluationMeasure
-                  label="Braco dir."
+                  label="Braço dir."
                   value={latestEvaluation.medidasCorporais?.bracoDireito}
                 />
                 <EvaluationMeasure
@@ -572,7 +572,7 @@ export function InstructorStudentWorkoutScreen({
             </>
           ) : (
             <Text style={styles.emptyEvaluationText}>
-              Registre a primeira avaliacao para acompanhar peso e medidas.
+              Registre a primeira avaliação para acompanhar peso e medidas.
             </Text>
           )}
         </GlassCard>
@@ -590,7 +590,7 @@ export function InstructorStudentWorkoutScreen({
           <StateCard loading title="Carregando ficha" text="Buscando ficha ativa." />
         ) : error ? (
           <StateCard
-            title="Ficha indisponivel"
+            title="Ficha indisponível"
             text={error}
             actionLabel="Tentar novamente"
             onAction={loadWorkout}
@@ -672,7 +672,7 @@ export function InstructorStudentWorkoutScreen({
                     <View style={styles.divisionTitleWrap}>
                       <Text style={styles.divisionTitle}>{division.nome}</Text>
                       <Text style={styles.divisionSubtitle}>
-                        {division.exerciciosDivisao.length} exercicio
+                        {division.exerciciosDivisao.length} exercício
                         {division.exerciciosDivisao.length === 1 ? '' : 's'}
                       </Text>
                     </View>
@@ -712,14 +712,14 @@ export function InstructorStudentWorkoutScreen({
                           pressed ? styles.addExerciseButtonPressed : null,
                         ]}
                       >
-                        <Text style={styles.addExerciseButtonText}>+ Adicionar exercicio</Text>
+                        <Text style={styles.addExerciseButtonText}>+ Adicionar exercício</Text>
                       </Pressable>
 
                       {division.exerciciosDivisao.length === 0 ? (
                         <View style={styles.emptyExerciseCard}>
-                          <Text style={styles.emptyExerciseTitle}>Sem exercicios ainda.</Text>
+                          <Text style={styles.emptyExerciseTitle}>Sem exercícios ainda.</Text>
                           <Text style={styles.emptyExerciseText}>
-                            Adicione o primeiro exercicio deste treino.
+                            Adicione o primeiro exercício deste treino.
                           </Text>
                         </View>
                       ) : null}
@@ -737,8 +737,8 @@ export function InstructorStudentWorkoutScreen({
                           </View>
 
                           <View style={styles.metrics}>
-                            <MetricBadge label="Series" value={String(item.series)} />
-                            <MetricBadge label="Repeticoes" value={item.repeticoes} />
+                            <MetricBadge label="Séries" value={String(item.series)} />
+                            <MetricBadge label="Repetições" value={item.repeticoes} />
                             <MetricBadge
                               label="Descanso"
                               value={item.descansoSegundos ? `${item.descansoSegundos}s` : '-'}

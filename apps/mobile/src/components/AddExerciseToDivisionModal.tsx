@@ -72,17 +72,17 @@ export function AddExerciseToDivisionModal({
       : undefined;
 
     if (!selectedExerciseId) {
-      setValidationError('Selecione um exercicio da biblioteca.');
+      setValidationError('Selecione um exercício da biblioteca.');
       return;
     }
 
     if (!series.trim() || !Number.isInteger(normalizedSeries) || normalizedSeries <= 0) {
-      setValidationError('Informe uma quantidade valida de series.');
+      setValidationError('Informe uma quantidade válida de séries.');
       return;
     }
 
     if (!repeticoes.trim()) {
-      setValidationError('Informe as repeticoes.');
+      setValidationError('Informe as repeticões.');
       return;
     }
 
@@ -90,7 +90,7 @@ export function AddExerciseToDivisionModal({
       normalizedRest !== undefined &&
       (!Number.isInteger(normalizedRest) || normalizedRest < 0)
     ) {
-      setValidationError('Informe um descanso valido em segundos.');
+      setValidationError('Informe um descanso válido em segundos.');
       return;
     }
 
@@ -121,26 +121,26 @@ export function AddExerciseToDivisionModal({
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.handle} />
-            <Text style={styles.kicker}>Adicionar exercicio</Text>
+            <Text style={styles.kicker}>Adicionar exercício</Text>
             <Text style={styles.title}>{divisionName}</Text>
             <Text style={styles.subtitle}>
-              Selecione um exercicio da biblioteca e defina a prescricao. A ordem sera {nextOrder}.
+              Selecione um exercício da biblioteca e defina a prescrição. A ordem será {nextOrder}.
             </Text>
 
             <View style={styles.orderPill}>
               <Text style={styles.orderValue}>{nextOrder}</Text>
-              <Text style={styles.orderLabel}>Proxima ordem</Text>
+              <Text style={styles.orderLabel}>Próxima ordem</Text>
             </View>
 
-            <Text style={styles.inputLabel}>Biblioteca de exercicios</Text>
+            <Text style={styles.inputLabel}>Biblioteca de exercícios</Text>
             {loadingExercises ? (
               <View style={styles.libraryState}>
                 <ActivityIndicator color="#B7FF4A" />
-                <Text style={styles.libraryStateText}>Carregando exercicios...</Text>
+                <Text style={styles.libraryStateText}>Carregando exercícios...</Text>
               </View>
             ) : exercises.length === 0 ? (
               <View style={styles.libraryState}>
-                <Text style={styles.libraryStateText}>Nenhum exercicio disponivel.</Text>
+                <Text style={styles.libraryStateText}>Nenhum exercício disponível.</Text>
                 <Pressable onPress={onReloadExercises} style={styles.reloadButton}>
                   <Text style={styles.reloadText}>Atualizar</Text>
                 </Pressable>
@@ -181,7 +181,7 @@ export function AddExerciseToDivisionModal({
 
             <View style={styles.formRow}>
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Series</Text>
+                <Text style={styles.inputLabel}>Séries</Text>
                 <TextInput
                   editable={!saving}
                   keyboardType="number-pad"
@@ -194,7 +194,7 @@ export function AddExerciseToDivisionModal({
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Repeticoes</Text>
+                <Text style={styles.inputLabel}>Repetições</Text>
                 <TextInput
                   editable={!saving}
                   onChangeText={setRepeticoes}
@@ -245,7 +245,7 @@ export function AddExerciseToDivisionModal({
                   {saving ? (
                     <ActivityIndicator color="#07110B" />
                   ) : (
-                    <Text style={styles.submitText}>Salvar exercicio</Text>
+                    <Text style={styles.submitText}>Salvar exercício</Text>
                   )}
                 </LinearGradient>
               </Pressable>

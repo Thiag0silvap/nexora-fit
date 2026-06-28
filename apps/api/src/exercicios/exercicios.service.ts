@@ -55,7 +55,7 @@ export class ExerciciosService {
     });
 
     if (!exercicio) {
-      throw new NotFoundException('Exercicio nao encontrado.');
+      throw new NotFoundException('Exercício não encontrado.');
     }
 
     return exercicio;
@@ -113,7 +113,7 @@ export class ExerciciosService {
     });
 
     if (!exercicio) {
-      throw new NotFoundException('Exercicio nao encontrado.');
+      throw new NotFoundException('Exercício não encontrado.');
     }
 
     return exercicio;
@@ -130,7 +130,7 @@ export class ExerciciosService {
     });
 
     if (exercicio && exercicio.id !== ignoredExercicioId) {
-      throw new ConflictException('Nome de exercicio ja cadastrado.');
+      throw new ConflictException('Nome de exercício já cadastrado.');
     }
   }
 
@@ -140,7 +140,7 @@ export class ExerciciosService {
     }
 
     if (!Object.values(GrupoMuscular).includes(grupoMuscular)) {
-      throw new BadRequestException('Grupo muscular invalido.');
+      throw new BadRequestException('Grupo muscular inválido.');
     }
   }
 
@@ -154,7 +154,7 @@ export class ExerciciosService {
         : undefined;
 
       if (target?.includes('nome')) {
-        throw new ConflictException('Nome de exercicio ja cadastrado.');
+        throw new ConflictException('Nome de exercício já cadastrado.');
       }
 
       throw new ConflictException('Registro duplicado.');

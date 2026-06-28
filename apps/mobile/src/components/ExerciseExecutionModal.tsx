@@ -68,19 +68,19 @@ export function ExerciseExecutionModal({
 
     if (!repeticoes.trim() || !Number.isInteger(normalizedReps)) {
       warningHaptic();
-      setValidationError('Informe as repeticoes realizadas.');
+      setValidationError('Informe as repetições realizadas.');
       return;
     }
 
     if (normalizedCarga < 0) {
       warningHaptic();
-      setValidationError('A carga nao pode ser negativa.');
+      setValidationError('A carga não pode ser negativa.');
       return;
     }
 
     if (normalizedReps <= 0) {
       warningHaptic();
-      setValidationError('As repeticoes precisam ser maiores que zero.');
+      setValidationError('As repetições precisam ser maiores que zero.');
       return;
     }
 
@@ -122,7 +122,7 @@ export function ExerciseExecutionModal({
               </View>
               <View style={styles.headerTextWrap}>
                 <Text style={styles.kicker}>Registrar carga</Text>
-                <Text style={styles.title}>{exercise?.exercicio.nome ?? 'Exercicio'}</Text>
+                <Text style={styles.title}>{exercise?.exercicio.nome ?? 'Exercício'}</Text>
                 <Text style={styles.subtitle}>
                   {formatEnum(exercise?.exercicio.grupoMuscular)}
                 </Text>
@@ -132,11 +132,11 @@ export function ExerciseExecutionModal({
             <View style={styles.planGrid}>
               <View style={styles.planItem}>
                 <Text style={styles.planValue}>{exercise?.series ?? '-'}</Text>
-                <Text style={styles.planLabel}>Series</Text>
+                <Text style={styles.planLabel}>Séries</Text>
               </View>
               <View style={styles.planItem}>
                 <Text style={styles.planValue}>{exercise?.repeticoes ?? '-'}</Text>
-                <Text style={styles.planLabel}>Repeticoes</Text>
+                <Text style={styles.planLabel}>Repetições</Text>
               </View>
             </View>
 
@@ -155,7 +155,7 @@ export function ExerciseExecutionModal({
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Repeticoes</Text>
+                <Text style={styles.inputLabel}>Repetições</Text>
                 <TextInput
                   editable={!saving}
                   keyboardType="number-pad"
@@ -169,12 +169,12 @@ export function ExerciseExecutionModal({
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Observacao opcional</Text>
+              <Text style={styles.inputLabel}>Observação opcional</Text>
               <TextInput
                 editable={!saving}
                 multiline
                 onChangeText={setObservacao}
-                placeholder="Execucao confortavel"
+                placeholder="Execução confortável"
                 placeholderTextColor="#647084"
                 style={[styles.input, styles.textArea]}
                 textAlignVertical="top"
@@ -215,7 +215,7 @@ export function ExerciseExecutionModal({
                   {saving ? (
                     <ActivityIndicator color="#07110B" />
                   ) : (
-                    <Text style={styles.submitText}>Concluir exercicio</Text>
+                    <Text style={styles.submitText}>Concluir exercício</Text>
                   )}
                 </LinearGradient>
               </Pressable>

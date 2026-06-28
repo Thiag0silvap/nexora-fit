@@ -154,7 +154,7 @@ export class FichasTreinoService {
     });
 
     if (!ficha) {
-      throw new NotFoundException('Ficha de treino nao encontrada.');
+      throw new NotFoundException('Ficha de treino não encontrada.');
     }
 
     return ficha;
@@ -224,7 +224,7 @@ export class FichasTreinoService {
     });
 
     if (!originalFicha) {
-      throw new NotFoundException('Ficha de treino nao encontrada.');
+      throw new NotFoundException('Ficha de treino não encontrada.');
     }
 
     return this.prisma.$transaction(async (tx) => {
@@ -283,7 +283,7 @@ export class FichasTreinoService {
         },
       });
     } catch (error) {
-      this.handleUniqueConstraintError(error, 'Ordem da divisao ja cadastrada.');
+      this.handleUniqueConstraintError(error, 'Ordem da divisão já cadastrada.');
       throw error;
     }
   }
@@ -314,7 +314,7 @@ export class FichasTreinoService {
     } catch (error) {
       this.handleUniqueConstraintError(
         error,
-        'Ordem do exercicio ja cadastrada nesta divisao.',
+        'Ordem do exercício já cadastrada nesta divisão.',
       );
       throw error;
     }
@@ -336,7 +336,7 @@ export class FichasTreinoService {
         },
       });
     } catch (error) {
-      this.handleUniqueConstraintError(error, 'Ordem da divisao ja cadastrada.');
+      this.handleUniqueConstraintError(error, 'Ordem da divisão já cadastrada.');
       throw error;
     }
   }
@@ -373,7 +373,7 @@ export class FichasTreinoService {
     } catch (error) {
       this.handleUniqueConstraintError(
         error,
-        'Ordem do exercicio ja cadastrada nesta divisao.',
+        'Ordem do exercício já cadastrada nesta divisão.',
       );
       throw error;
     }
@@ -440,7 +440,7 @@ export class FichasTreinoService {
     });
 
     if (!ficha) {
-      throw new NotFoundException('Ficha de treino nao encontrada.');
+      throw new NotFoundException('Ficha de treino não encontrada.');
     }
 
     return ficha;
@@ -474,7 +474,7 @@ export class FichasTreinoService {
     });
 
     if (!divisao) {
-      throw new NotFoundException('Divisao de treino nao encontrada.');
+      throw new NotFoundException('Divisão de treino não encontrada.');
     }
 
     return divisao;
@@ -510,7 +510,7 @@ export class FichasTreinoService {
     });
 
     if (!exercicioDivisao) {
-      throw new NotFoundException('Exercicio da divisao nao encontrado.');
+      throw new NotFoundException('Exercício da divisão não encontrado.');
     }
 
     return exercicioDivisao;
@@ -532,7 +532,7 @@ export class FichasTreinoService {
     });
 
     if (!aluno) {
-      throw new NotFoundException('Aluno nao encontrado ou inativo.');
+      throw new NotFoundException('Aluno não encontrado ou inativo.');
     }
   }
 
@@ -556,7 +556,7 @@ export class FichasTreinoService {
     });
 
     if (!instrutor) {
-      throw new NotFoundException('Instrutor nao encontrado ou inativo.');
+      throw new NotFoundException('Instrutor não encontrado ou inativo.');
     }
 
     return instrutor;
@@ -570,7 +570,7 @@ export class FichasTreinoService {
     const instrutor = await this.ensureInstrutorAtivoNaAcademia(user, instrutorId);
 
     if (instrutor.usuarioId !== user.id) {
-      throw new ForbiddenException('Instrutor so pode gerenciar as proprias fichas.');
+      throw new ForbiddenException('Instrutor só pode gerenciar as próprias fichas.');
     }
   }
 
@@ -586,7 +586,7 @@ export class FichasTreinoService {
     });
 
     if (!exercicio) {
-      throw new NotFoundException('Exercicio nao encontrado ou inativo.');
+      throw new NotFoundException('Exercício não encontrado ou inativo.');
     }
   }
 
@@ -596,7 +596,7 @@ export class FichasTreinoService {
     }
 
     if (!Object.values(StatusFicha).includes(status)) {
-      throw new BadRequestException('Status da ficha invalido.');
+      throw new BadRequestException('Status da ficha inválido.');
     }
   }
 

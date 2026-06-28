@@ -154,7 +154,7 @@ export function AlunoFormModal({
             </label>
 
             <label>
-              Username
+              Usuário
               <input
                 autoCapitalize="none"
                 onChange={(event) => setUsername(event.target.value)}
@@ -165,10 +165,10 @@ export function AlunoFormModal({
             </label>
 
             <label>
-              Email opcional
+              E-mail opcional
               <input
                 onChange={(event) => setEmail(event.target.value)}
-                placeholder="thiago@email.com"
+                placeholder="thiago@e-mail.com"
                 type="email"
                 value={email}
               />
@@ -200,7 +200,7 @@ export function AlunoFormModal({
                 <label>
                   Sexo
                   <select onChange={(event) => setSexo(event.target.value)} value={sexo}>
-                    <option value="">Nao informado</option>
+                    <option value="">Não informado</option>
                     {sexos.map((item) => (
                       <option key={item.value} value={item.value}>
                         {item.label}
@@ -234,7 +234,7 @@ export function AlunoFormModal({
             <label>
               Objetivo
               <select onChange={(event) => setObjetivo(event.target.value)} value={objetivo}>
-                <option value="">Nao informado</option>
+                <option value="">Não informado</option>
                 {goals.map((item) => (
                   <option key={item.value} value={item.value}>
                     {item.label}

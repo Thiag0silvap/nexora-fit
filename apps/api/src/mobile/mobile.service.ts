@@ -80,7 +80,7 @@ export class MobileService {
     });
 
     if (!ficha) {
-      throw new NotFoundException('Aluno nao possui ficha de treino ativa.');
+      throw new NotFoundException('Aluno não possui ficha de treino ativa.');
     }
 
     return ficha;
@@ -124,7 +124,7 @@ export class MobileService {
     });
 
     if (!aluno) {
-      throw new NotFoundException('Perfil de aluno nao encontrado.');
+      throw new NotFoundException('Perfil de aluno não encontrado.');
     }
 
     const academia = await this.prisma.academia.findFirst({
@@ -167,7 +167,7 @@ export class MobileService {
     });
 
     if (!aluno) {
-      throw new NotFoundException('Perfil de aluno nao encontrado.');
+      throw new NotFoundException('Perfil de aluno não encontrado.');
     }
 
     return aluno;

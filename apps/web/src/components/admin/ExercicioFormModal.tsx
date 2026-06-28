@@ -81,11 +81,11 @@ export function ExercicioFormModal({
 
   return (
     <div className="modal-backdrop" role="presentation">
-      <section className="modal-panel" aria-labelledby="exercicio-form-title" role="dialog">
+      <section className="modal-panel" aria-labelledby="exercício-form-title" role="dialog">
         <div className="modal-header">
           <div>
             <span>Biblioteca de exercícios</span>
-            <h2 id="exercicio-form-title">{title}</h2>
+            <h2 id="exercício-form-title">{title}</h2>
           </div>
           <button disabled={saving} type="button" onClick={onClose}>
             Fechar

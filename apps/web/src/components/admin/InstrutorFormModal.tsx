@@ -127,7 +127,7 @@ export function InstrutorFormModal({
             </label>
 
             <label>
-              Username
+              Usuário
               <input
                 autoCapitalize="none"
                 onChange={(event) => setUsername(event.target.value)}
@@ -138,7 +138,7 @@ export function InstrutorFormModal({
             </label>
 
             <label>
-              Email opcional
+              E-mail opcional
               <input
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="instrutor@fitgestao.com"

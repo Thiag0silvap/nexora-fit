@@ -88,7 +88,7 @@ export function EvaluationComparisonModal({
               <View style={styles.legend}>
                 <Text style={styles.legendText}>Atual</Text>
                 <View style={styles.legendLine} />
-                <Text style={styles.legendText}>Avaliação anterior</Text>
+                <Text style={styles.legendText}>Avaliacao anterior</Text>
               </View>
             )}
 

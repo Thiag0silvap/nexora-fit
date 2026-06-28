@@ -124,7 +124,7 @@ export class InstrutoresService {
     });
 
     if (!instrutor) {
-      throw new NotFoundException('Instrutor inativo nao encontrado.');
+      throw new NotFoundException('Instrutor inativo não encontrado.');
     }
 
     const senhaHash = await bcrypt.hash(dto.senha, 10);
@@ -160,7 +160,7 @@ export class InstrutoresService {
     });
 
     if (!instrutor) {
-      throw new NotFoundException('Instrutor nao encontrado.');
+      throw new NotFoundException('Instrutor não encontrado.');
     }
 
     if (user.role === UserRole.INSTRUTOR && instrutor.usuarioId !== user.id) {
@@ -279,7 +279,7 @@ export class InstrutoresService {
     });
 
     if (!instrutor) {
-      throw new NotFoundException('Instrutor nao encontrado.');
+      throw new NotFoundException('Instrutor não encontrado.');
     }
 
     return instrutor;
@@ -296,7 +296,7 @@ export class InstrutoresService {
     });
 
     if (usuario && usuario.id !== ignoredUsuarioId) {
-      throw new ConflictException('Username ja cadastrado.');
+      throw new ConflictException('Usuário já cadastrado.');
     }
   }
 
@@ -313,7 +313,7 @@ export class InstrutoresService {
     });
 
     if (usuario && usuario.id !== ignoredUsuarioId) {
-      throw new ConflictException('Email ja cadastrado.');
+      throw new ConflictException('E-mail já cadastrado.');
     }
   }
 
@@ -341,7 +341,7 @@ export class InstrutoresService {
     });
 
     if (instrutor && instrutor.id !== ignoredInstrutorId) {
-      throw new ConflictException('CREF ja cadastrado.');
+      throw new ConflictException('CREF já cadastrado.');
     }
   }
 
@@ -349,7 +349,7 @@ export class InstrutoresService {
     if (!status || status === 'ativos') return true;
     if (status === 'inativos') return false;
     if (status === 'todos') return undefined;
-    throw new ConflictException('Filtro de status invalido.');
+    throw new ConflictException('Filtro de status inválido.');
   }
 
   private handleUniqueConstraintError(error: unknown) {
@@ -362,15 +362,15 @@ export class InstrutoresService {
         : undefined;
 
       if (target?.includes('email')) {
-        throw new ConflictException('Email ja cadastrado.');
+        throw new ConflictException('E-mail já cadastrado.');
       }
 
       if (target?.includes('username')) {
-        throw new ConflictException('Username ja cadastrado.');
+        throw new ConflictException('Usuário já cadastrado.');
       }
 
       if (target?.includes('cref')) {
-        throw new ConflictException('CREF ja cadastrado.');
+        throw new ConflictException('CREF já cadastrado.');
       }
 
       throw new ConflictException('Registro duplicado.');

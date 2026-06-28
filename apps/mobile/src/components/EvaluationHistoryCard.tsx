@@ -21,7 +21,7 @@ export function EvaluationHistoryCard({
     >
       <View style={styles.header}>
         <View>
-          <Text style={styles.dateLabel}>Avaliação</Text>
+          <Text style={styles.dateLabel}>Avaliacao</Text>
           <Text style={styles.date}>{formatDate(evaluation.createdAt)}</Text>
         </View>
         <View style={styles.arrowButton}>
